@@ -5,7 +5,7 @@
         Fancy : "1.0.0"
     } );
     var NAME    = "FancyDate",
-        VERSION = "1.0.0",
+        VERSION = "1.0.1",
         logged  = false;
 
     function findByKey ( obj, index ) {
@@ -52,11 +52,10 @@
         return SELF;
     }
 
-
     FancyDate.api = FancyDate.prototype = {};
-    FancyDate.api.version          = VERSION;
-    FancyDate.api.name             = NAME;
-    FancyDate.api.init             = function () {
+    FancyDate.api.version   = VERSION;
+    FancyDate.api.name      = NAME;
+    FancyDate.api.init      = function () {
         var SELF = this;
         if ( !logged ) {
             logged = true;
@@ -133,8 +132,24 @@
             rows         : []
         };
 
+        SELF.element.off ( "." + NAME ).on ( "keydown." + NAME, function ( e ) {
+            setTimeout ( function () {
+                if ( (e.which | e.keyCode) === 9 ) SELF.close ();
+            }, 2 );
+        } ).on ( "focus." + NAME, function () {
+            if ( !SELF.visible && SELF.settings.query ( SELF.element ) )
+                SELF.open ();
+        } ).on ( "blur." + NAME, function () {
+            SELF.close ();
+        } ).on ( "input." + NAME + " paste." + NAME, function ( e ) {
+            e.preventDefault ();
+            e.stopPropagation ();
+        } );
+
+
+
     };
-    FancyDate.api.show             = function () {
+    FancyDate.api.open      = function () {
         var SELF = this;
         if ( !SELF.element[ 0 ].readOnly && !SELF.element[ 0 ].disabled ) {
             if ( this.settings.free ) {
@@ -155,7 +170,7 @@
                 SELF.html.dialog.show ();
                 SELF.visible = true;
                 SELF.create ();
-                SELF.settings.onShow.call ( SELF );
+                SELF.settings.onOpen.call ( SELF );
             }
 
             if ( SELF.settings.animated ) {
@@ -170,7 +185,7 @@
 
         return SELF;
     };
-    FancyDate.api.close            = function () {
+    FancyDate.api.close     = function () {
         var SELF = this;
         if ( !SELF.html.dialog.hasClass ( 'hide' ) ) {
             SELF.element.unbind ( '.' + SELF.name + ':prevent' );
@@ -198,29 +213,29 @@
 
         return SELF;
     };
-    FancyDate.api.update           = function () {
+    FancyDate.api.update    = function () {
         var SELF = this;
         SELF.html.calendar.html ( '' );
         SELF.html.title.html ( SELF.html.month.html ( SELF.translate ( 'month', SELF.current.getMonth () ) ) ).append ( SELF.html.year.html ( SELF.current.getFullYear () ) );
         SELF.create ();
     };
-    FancyDate.api.create           = function () {
+    FancyDate.api.create    = function () {
         var SELF    = this,
-            current = new Date ( SELF.current.getFullYear (), SELF.current.getMonth (), 1 ),
+            current = new Date ( this.current.getFullYear (), this.current.getMonth (), 1 ),
             i       = 0,
             n       = 0;
-        SELF.html.title.append ( SELF.html.month.html ( SELF.translate ( "month", SELF.current.getMonth () ) ) ).append ( SELF.html.year.html ( SELF.current.getFullYear () ) );
-        SELF.html.title.append ( SELF.html.yearChanger );
-        SELF.html.yearChanger.children ().remove ();
+        this.html.title.append ( this.html.month.html ( this.translate ( "month", this.current.getMonth () ) ) ).append ( this.html.year.html ( this.current.getFullYear () ) );
+        this.html.title.append ( this.html.yearChanger );
+        this.html.yearChanger.children ().remove ();
         if ( current.getDay () != 1 && current.getDay () != 0 ) {
-            var c   = new Date ( SELF.current.getFullYear (), SELF.current.getMonth (), 0 );
-            current = new Date ( SELF.current.getFullYear (), SELF.current.getMonth () - 1, (c.getDate () - current.getDay () + 2) );
+            var c   = new Date ( this.current.getFullYear (), this.current.getMonth (), 0 );
+            current = new Date ( this.current.getFullYear (), this.current.getMonth () - 1, (c.getDate () - current.getDay () + 2) );
         } else if ( current.getDay () == 0 ) {
-            var c   = new Date ( SELF.current.getFullYear (), SELF.current.getMonth (), 0 );
-            current = new Date ( SELF.current.getFullYear (), SELF.current.getMonth () - 1, (c.getDate () - 5) );
+            var c   = new Date ( this.current.getFullYear (), this.current.getMonth (), 0 );
+            current = new Date ( this.current.getFullYear (), this.current.getMonth () - 1, (c.getDate () - 5) );
         } else {
-            var c   = new Date ( SELF.current.getFullYear (), SELF.current.getMonth (), 0 );
-            current = new Date ( SELF.current.getFullYear (), SELF.current.getMonth () - 1, (c.getDate () - 6) );
+            var c   = new Date ( this.current.getFullYear (), this.current.getMonth (), 0 );
+            current = new Date ( this.current.getFullYear (), this.current.getMonth () - 1, (c.getDate () - 6) );
         }
 
         var ul = $ ( "<ul/>" );
@@ -231,19 +246,19 @@
             } );
         }
 
-        SELF.html.yearChanger.append ( ul );
-        for ( var y = SELF.current.getFullYear () + 50; y > SELF.current.getFullYear () - 50; y-- ) {
+        this.html.yearChanger.append ( ul );
+        for ( var y = this.current.getFullYear () + 50; y > this.current.getFullYear () - 50; y-- ) {
             var li = $ ( "<li/>", {
-                html: SELF.translate ( "month", SELF.current.getMonth () ) + " " + y
+                html: this.translate ( "month", this.current.getMonth () ) + " " + y
             } );
             ul.append ( li );
             change ( li, y );
         }
 
-        SELF.html.days = [];
-        SELF.html.rows = [];
+        this.html.days = [];
+        this.html.rows = [];
 
-        SELF.html.calendar.children ().remove ();
+        this.html.calendar.children ().remove ();
         if ( this.settings.showWeekHeader ) {
             var rowh = $ ( "<div/>", {
                 id: this.name + "-rowh"
@@ -270,34 +285,34 @@
         }
         while ( i < 6 ) {
             i++;
-            SELF.html.rows[ i ] = $ ( '<div/>', {
-                id     : SELF.name + '.row-' + i,
-                "class": SELF.name + '-row'
+            this.html.rows[ i ] = $ ( '<div/>', {
+                id     : this.name + '.row-' + i,
+                "class": this.name + '-row'
             } );
-            SELF.html.calendar.append ( SELF.html.rows[ i ] );
+            this.html.calendar.append ( this.html.rows[ i ] );
             var day             = 0;
             while ( day < 7 ) {
                 day++;
                 n++;
                 var d = $ ( '<div/>', {
-                    id     : SELF.name + '-day-' + n,
-                    "class": SELF.name + '-day' + ' ' + SELF.name + '-button',
+                    id     : this.name + '-day-' + n,
+                    "class": this.name + '-day' + ' ' + this.name + '-button',
                     html   : current.getDate ()
                 } ).data ( 'date', current );
 
-                if ( current.getMonth () != SELF.current.getMonth () ) d.addClass ( SELF.name + '-day-extern' );
-                if ( current.getMonth () == SELF.today.getMonth () && current.getDate () == SELF.today.getDate () && current.getFullYear () == SELF.today.getFullYear () ) d.addClass ( SELF.name + '-day-today' );
-                if ( SELF.selected && current.getTime () === SELF.selected.getTime () ) d.addClass ( SELF.name + '-active' );
+                if ( current.getMonth () != this.current.getMonth () ) d.addClass ( this.name + '-day-extern' );
+                if ( current.getMonth () == this.today.getMonth () && current.getDate () == this.today.getDate () && current.getFullYear () == SELF.today.getFullYear () ) d.addClass ( this.name + '-day-today' );
+                if ( this.selected && current.getTime () === this.selected.getTime () ) d.addClass ( this.name + '-active' );
 
-                current = new Date ( current.getTime () + SELF.calculate.day );
-                SELF.html.days.push ( d );
-                SELF.html.rows[ i ].append ( d );
+                current = new Date ( current.getTime () + this.calculate.day );
+                this.html.days.push ( d );
+                this.html.rows[ i ].append ( d );
 
             }
         }
 
-        var width = SELF.html.body.outerWidth () / 7;
-        $ ( SELF.html.days ).each ( function () {
+        var width = this.html.body.outerWidth () / 7;
+        $ ( this.html.days ).each ( function () {
             $ ( this ).css ( {
                 width: parseInt ( width + 1 - parseInt ( $ ( this ).css ( "paddingLeft" ) ) - parseInt ( $ ( this ).css ( "paddingRight" ) ) )
             } );
@@ -316,89 +331,81 @@
         } else {
             this.html.dialog.css ( {
                 position: "absolute",
-                left    : SELF.element.offset ().left,
-                top     : SELF.element.offset ().top + SELF.element.outerHeight ()
+                left    : this.element.offset ().left,
+                top     : this.element.offset ().top + this.element.outerHeight ()
             } );
         }
 
-        SELF.addEventListener ();
-        return SELF;
+        this.addEventListener();
+        return this;
     };
     FancyDate.api.addEventListener = function () {
         var SELF = this;
-        for ( var i = 0; i < SELF.html.days.length; i++ ) {
-            $ ( SELF.html.days[ i ] ).on ( 'click', function () {
+
+        for ( var i = 0; i < this.html.days.length; i++ ) {
+            $ ( this.html.days[ i ] ).on ( 'click', function (e) {
                 SELF.select ( new Date ( $ ( this ).data ( 'date' ) ) );
+                e.preventDefault ();
+                e.stopPropagation ();
+                e.stopImmediatePropagation ();
             } );
         }
-        SELF.element.off ( "." + NAME ).on ( "keydown." + NAME, function ( e ) {
-            setTimeout ( function () {
-                if ( (e.which | e.keyCode) === 9 ) SELF.close ();
-            }, 2 );
-        } ).on ( "focus." + NAME, function () {
-            if ( !SELF.visible && SELF.settings.query ( SELF.element ) ) SELF.show ();
-        } ).on ( "blur." + NAME, function () {
-            SELF.close ();
-        } ).on ( "input." + NAME + " paste." + NAME, function ( e ) {
+
+        this.html.dialog.off ( "mousedown" ).on ( "mousedown", function ( e ) {
             e.preventDefault ();
             e.stopPropagation ();
-        } );
-        $ ( document ).off ( "." + NAME ).on ( "click." + NAME, function ( e ) {
-            if ( !$ ( e.target ).is ( SELF.element ) )SELF.close ();
-        } );
-        SELF.html.dialog.off ( "mousedown" ).on ( "mousedown", function ( e ) {
-            e.preventDefault ();
-            e.stopPropagation ();
+            e.stopImmediatePropagation ();
         } );
 
-        SELF.html.clear.off ( "click" ).on ( "click", function () {
+        this.html.clear.off ( "click" ).on ( "click", function () {
             SELF.element.val ( "" );
-            SELF.selected = false;
+            SELF.selected = null;
             SELF.current  = SELF.today;
+            if ( typeof SELF.settings.onSelect == "function" ) SELF.settings.onSelect ( SELF.selected );
             SELF.close ();
         } );
 
-        SELF.html.dialog.off ( "." + SELF.name ).on ( 'selectstart.' + SELF.name, function ( event ) {
+        this.html.dialog.off ( "." + this.name ).on ( 'selectstart.' + this.name, function ( event ) {
             "use strict";
             event.preventDefault ();
         } );
 
-        SELF.html.close.off ( "click" ).on ( 'click', function () {
+        this.html.close.off ( "click" ).on ( 'click', function () {
             SELF.close ();
         } );
 
-        SELF.html.today.off ( 'click' ).on ( 'click', function () {
+        this.html.today.off ( 'click' ).on ( 'click', function () {
             SELF.select ( SELF.today );
             SELF.current = SELF.today;
             SELF.close ();
         } );
 
-        SELF.html.next.off ( 'click' ).on ( 'click', function () {
+        this.html.next.off ( 'click' ).on ( 'click', function () {
             SELF.current = new Date ( SELF.current.getFullYear (), SELF.current.getMonth () + 1, 1 );
             SELF.update ();
         } );
 
-        SELF.html.previous.off ( 'click' ).on ( 'click', function () {
+        this.html.previous.off ( 'click' ).on ( 'click', function () {
             SELF.current = new Date ( SELF.current.getFullYear (), SELF.current.getMonth () - 1, 1 );
             SELF.update ();
         } );
 
-        return SELF;
+        return this;
     };
-    FancyDate.api.select           = function ( date ) {
+    FancyDate.api.select    = function ( date ) {
         var SELF      = this;
         SELF.element.val ( SELF.encode ( date ) );
         SELF.selected = date;
         if ( typeof SELF.settings.onSelect == "function" ) SELF.settings.onSelect ( SELF.selected );
         SELF.close ();
-        return SELF;
+        return this;
     };
-    FancyDate.api.encode           = function ( date, format ) {
+    FancyDate.api.encode    = function ( date, format ) {
         var SELF = this;
         format   = format || SELF.settings.format;
         return format.replace ( 'dd', (date.getDate () < 10 ? '0' + date.getDate () : date.getDate ()) ).replace ( 'mm', (date.getMonth () < 9 ? '0' + (date.getMonth () + 1) : (date.getMonth () + 1)) ).replace ( 'yyyy', date.getFullYear () );
     };
-    FancyDate.api.decode           = function ( date ) {
+    FancyDate.api.decode    = function ( date ) {
         var SELF   = this;
         var format = {
             d: parseInt ( date.substring ( SELF.settings.format.indexOf ( 'dd' ), SELF.settings.format.indexOf ( 'dd' ) + 2 ) ),
@@ -407,7 +414,7 @@
         };
         return new Date ( format.y, format.m, format.d );
     };
-    FancyDate.api.translate        = function ( key, value ) {
+    FancyDate.api.translate = function ( key, value ) {
         var l = FancyDate.translation[ navigator.language ] ? navigator.language : 'en',
             t = FancyDate.translation[ l ][ key ];
         if ( typeof t[ 0 ] == "undefined" && typeof value == "number" ) {
@@ -416,15 +423,15 @@
         if ( t ) t = FancyDate.translation[ l ][ key ][ value ];
         return t;
     };
-    FancyDate.api.setYear          = function ( year ) {
+    FancyDate.api.setYear   = function ( year ) {
         this.current.setYear ( year );
         this.create ();
     };
-    Fancy.settings[ NAME ]         = {
+    Fancy.settings[ NAME ]  = {
         format        : "dd.mm.yyyy",
         animated      : true,
         onSelect      : function () {},
-        onShow        : function () {},
+        onOpen        : function () {},
         onClose       : function () {},
         query         : function () {
             return true;
@@ -478,7 +485,9 @@
     };
     Fancy.date            = VERSION;
     Fancy.api.date        = function ( settings ) {
-        return this.set ( FancyDate, settings );
+        return this.set ( NAME, function ( el ) {
+            return new FancyDate ( el, settings )
+        } );
     };
 
 }) ( window, jQuery );
