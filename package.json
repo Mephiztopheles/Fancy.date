@@ -1,6 +1,6 @@
 {
   "name": "fancy-date",
-  "title": "Fancy",
+  "title": "FancyDate",
   "description": "JavaScript Datepicker-plugin for Fancy",
   "version": "1.0.1",
   "main": "fancydate.js",
