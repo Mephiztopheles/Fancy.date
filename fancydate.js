@@ -5,7 +5,7 @@
         Fancy : "1.0.0"
     } );
     var NAME    = "FancyDate",
-        VERSION = "1.0.1",
+        VERSION = "1.0.2",
         logged  = false;
 
     function findByKey ( obj, index ) {
@@ -41,7 +41,7 @@
         SELF.today    = SELF.decode ( SELF.encode ( new Date () ) );
         SELF.current  = SELF.element.val () ? SELF.decode ( SELF.element.val () ) : SELF.decode ( SELF.encode ( new Date () ) );
         SELF.selected = SELF.decode ( SELF.element.val () );
-        Fancy.watch ( Fancy, "selected", function ( prop, old, val ) {
+        Fancy.watch ( SELF, "selected", function ( prop, old, val ) {
             setTimeout ( function () {
                 SELF.element.val ( SELF.encode ( SELF.selected ) );
             }, 0 );
