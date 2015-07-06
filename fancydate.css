@@ -228,6 +228,11 @@
     box-sizing  : initial;
 }
 
+.FancyDate-day.disabled {
+    background : #7e7e7e;
+    cursor     : not-allowed;
+}
+
 .FancyDate-day-today {
     background : #8E0E0E;
     color      : #FFF
@@ -275,7 +280,7 @@
     transition         : background 0.3s
 }
 
-.FancyDate-button:hover {
+.FancyDate-button:not(.disabled):hover {
     background : #CECECE;
     color      : #8E0E0E
 }

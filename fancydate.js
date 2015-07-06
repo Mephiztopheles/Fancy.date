@@ -53,9 +53,9 @@
     }
 
     FancyDate.api = FancyDate.prototype = {};
-    FancyDate.api.version   = VERSION;
-    FancyDate.api.name      = NAME;
-    FancyDate.api.init      = function () {
+    FancyDate.api.version          = VERSION;
+    FancyDate.api.name             = NAME;
+    FancyDate.api.init             = function () {
         var SELF = this;
         if ( !logged ) {
             logged = true;
@@ -147,9 +147,8 @@
         } );
 
 
-
     };
-    FancyDate.api.open      = function () {
+    FancyDate.api.open             = function () {
         var SELF = this;
         if ( !SELF.element[ 0 ].readOnly && !SELF.element[ 0 ].disabled ) {
             if ( this.settings.free ) {
@@ -185,7 +184,7 @@
 
         return SELF;
     };
-    FancyDate.api.close     = function () {
+    FancyDate.api.close            = function () {
         var SELF = this;
         if ( !SELF.html.dialog.hasClass ( 'hide' ) ) {
             SELF.element.unbind ( '.' + SELF.name + ':prevent' );
@@ -213,13 +212,13 @@
 
         return SELF;
     };
-    FancyDate.api.update    = function () {
+    FancyDate.api.update           = function () {
         var SELF = this;
         SELF.html.calendar.html ( '' );
         SELF.html.title.html ( SELF.html.month.html ( SELF.translate ( 'month', SELF.current.getMonth () ) ) ).append ( SELF.html.year.html ( SELF.current.getFullYear () ) );
         SELF.create ();
     };
-    FancyDate.api.create    = function () {
+    FancyDate.api.create           = function () {
         var SELF    = this,
             current = new Date ( this.current.getFullYear (), this.current.getMonth (), 1 ),
             i       = 0,
@@ -227,14 +226,15 @@
         this.html.title.append ( this.html.month.html ( this.translate ( "month", this.current.getMonth () ) ) ).append ( this.html.year.html ( this.current.getFullYear () ) );
         this.html.title.append ( this.html.yearChanger );
         this.html.yearChanger.children ().remove ();
+        var c;
         if ( current.getDay () != 1 && current.getDay () != 0 ) {
-            var c   = new Date ( this.current.getFullYear (), this.current.getMonth (), 0 );
+            c       = new Date ( this.current.getFullYear (), this.current.getMonth (), 0 );
             current = new Date ( this.current.getFullYear (), this.current.getMonth () - 1, (c.getDate () - current.getDay () + 2) );
         } else if ( current.getDay () == 0 ) {
-            var c   = new Date ( this.current.getFullYear (), this.current.getMonth (), 0 );
+            c       = new Date ( this.current.getFullYear (), this.current.getMonth (), 0 );
             current = new Date ( this.current.getFullYear (), this.current.getMonth () - 1, (c.getDate () - 5) );
         } else {
-            var c   = new Date ( this.current.getFullYear (), this.current.getMonth (), 0 );
+            c       = new Date ( this.current.getFullYear (), this.current.getMonth (), 0 );
             current = new Date ( this.current.getFullYear (), this.current.getMonth () - 1, (c.getDate () - 6) );
         }
 
@@ -300,6 +300,8 @@
                     html   : current.getDate ()
                 } ).data ( 'date', current );
 
+                if ( this.settings.min && current.getTime () < new Date ( this.settings.min ).getTime () ) d.addClass ( "disabled" );
+                if ( this.settings.max && current.getTime () > new Date ( this.settings.max ).getTime () ) d.addClass ( "disabled" );
                 if ( current.getMonth () != this.current.getMonth () ) d.addClass ( this.name + '-day-extern' );
                 if ( current.getMonth () == this.today.getMonth () && current.getDate () == this.today.getDate () && current.getFullYear () == SELF.today.getFullYear () ) d.addClass ( this.name + '-day-today' );
                 if ( this.selected && current.getTime () === this.selected.getTime () ) d.addClass ( this.name + '-active' );
@@ -336,15 +338,16 @@
             } );
         }
 
-        this.addEventListener();
+        this.addEventListener ();
         return this;
     };
     FancyDate.api.addEventListener = function () {
         var SELF = this;
 
         for ( var i = 0; i < this.html.days.length; i++ ) {
-            $ ( this.html.days[ i ] ).on ( 'click', function (e) {
-                SELF.select ( new Date ( $ ( this ).data ( 'date' ) ) );
+            $ ( this.html.days[ i ] ).on ( 'click', function ( e ) {
+                if ( !$ ( this ).hasClass ( "disabled" ) )
+                    SELF.select ( new Date ( $ ( this ).data ( 'date' ) ) );
                 e.preventDefault ();
                 e.stopPropagation ();
                 e.stopImmediatePropagation ();
@@ -392,7 +395,7 @@
 
         return this;
     };
-    FancyDate.api.select    = function ( date ) {
+    FancyDate.api.select           = function ( date ) {
         var SELF      = this;
         SELF.element.val ( SELF.encode ( date ) );
         SELF.selected = date;
@@ -400,12 +403,12 @@
         SELF.close ();
         return this;
     };
-    FancyDate.api.encode    = function ( date, format ) {
+    FancyDate.api.encode           = function ( date, format ) {
         var SELF = this;
         format   = format || SELF.settings.format;
-        return format.replace ( 'dd', (date.getDate () < 10 ? '0' + date.getDate () : date.getDate ()) ).replace ( 'mm', (date.getMonth () < 9 ? '0' + (date.getMonth () + 1) : (date.getMonth () + 1)) ).replace ( 'yyyy', date.getFullYear () );
+        return format.replace ( 'dd', (date.getDate () < 10 ? '0' + date.getDate () : date.getDate ()) ).replace ( 'mm', (date.getMonth () < 9 ? '0' + (date.getMonth () + 1) : (date.getMonth () + 1)) ).replace ( 'yyyy', date.getFullYear ().toString () );
     };
-    FancyDate.api.decode    = function ( date ) {
+    FancyDate.api.decode           = function ( date ) {
         var SELF   = this;
         var format = {
             d: parseInt ( date.substring ( SELF.settings.format.indexOf ( 'dd' ), SELF.settings.format.indexOf ( 'dd' ) + 2 ) ),
@@ -414,7 +417,7 @@
         };
         return new Date ( format.y, format.m, format.d );
     };
-    FancyDate.api.translate = function ( key, value ) {
+    FancyDate.api.translate        = function ( key, value ) {
         var l = FancyDate.translation[ navigator.language ] ? navigator.language : 'en',
             t = FancyDate.translation[ l ][ key ];
         if ( typeof t[ 0 ] == "undefined" && typeof value == "number" ) {
@@ -423,11 +426,11 @@
         if ( t ) t = FancyDate.translation[ l ][ key ][ value ];
         return t;
     };
-    FancyDate.api.setYear   = function ( year ) {
+    FancyDate.api.setYear          = function ( year ) {
         this.current.setYear ( year );
         this.create ();
     };
-    Fancy.settings[ NAME ]  = {
+    Fancy.settings[ NAME ]         = {
         format        : "dd.mm.yyyy",
         animated      : true,
         onSelect      : function () {},
@@ -437,7 +440,9 @@
             return true;
         },
         free          : true,
-        showWeekHeader: true
+        showWeekHeader: true,
+        min           : false,
+        max           : false
     };
 
     FancyDate.translation = {
