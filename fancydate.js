@@ -2,10 +2,10 @@
 
     Fancy.require ( {
         jQuery: false,
-        Fancy : "1.0.0"
+        Fancy : "1.0.2"
     } );
     var NAME    = "FancyDate",
-        VERSION = "1.0.2",
+        VERSION = "1.0.4",
         logged  = false;
 
     function findByKey ( obj, index ) {
@@ -39,13 +39,17 @@
         SELF.name    = NAME;
 
         SELF.today    = SELF.decode ( SELF.encode ( new Date () ) );
-        SELF.current  = SELF.element.val () ? SELF.decode ( SELF.element.val () ) : SELF.decode ( SELF.encode ( new Date () ) );
+        SELF.current  = SELF.element.val () ? SELF.decode ( SELF.element.val () ) : SELF.settings.current || new Date ();
         SELF.selected = SELF.decode ( SELF.element.val () );
         Fancy.watch ( SELF, "selected", function ( prop, old, val ) {
-            setTimeout ( function () {
-                SELF.element.val ( SELF.encode ( SELF.selected ) );
-            }, 0 );
-            return new Date ( val );
+            if ( val && val != old ) {
+                setTimeout ( function () {
+                    SELF.element.val ( SELF.encode ( SELF.selected ) );
+                }, 0 );
+                return new Date ( val );
+            } else {
+                return val;
+            }
         } );
 
         SELF.init ();
@@ -247,7 +251,17 @@
         }
 
         this.html.yearChanger.append ( ul );
-        for ( var y = this.current.getFullYear () + 50; y > this.current.getFullYear () - 50; y-- ) {
+        var x  = this.current.getFullYear () - 50,
+            y  = this.current.getFullYear () + 50;
+        if ( this.settings.max ) {
+            x = Math.max ( x, this.settings.max.getFullYear () );
+            y = x + 50;
+        }
+        if ( this.settings.min ) {
+            y = Math.min ( y, this.settings.min.getFullYear () );
+            x = this.settings.max ? Math.max ( y - 50, this.settings.max.getFullYear () ) : y - 50;
+        }
+        for ( y; y > x; y-- ) {
             var li = $ ( "<li/>", {
                 html: this.translate ( "month", this.current.getMonth () ) + " " + y
             } );
@@ -439,6 +453,7 @@
         query         : function () {
             return true;
         },
+        current       : false,
         free          : true,
         showWeekHeader: true,
         min           : false,
