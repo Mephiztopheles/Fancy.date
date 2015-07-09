@@ -315,7 +315,7 @@
                     id     : this.name + '-day-' + n,
                     "class": this.name + '-day' + ' ' + this.name + '-button',
                     html   : current.getDate()
-                } ).data( 'date', current );
+                } ).data( 'date', current.getTime() );
 
                 if ( this.settings.min && current.getTime() < new Date( this.settings.min ).getTime() ) d.addClass( "disabled" );
                 if ( this.settings.max && current.getTime() > new Date( this.settings.max ).getTime() ) d.addClass( "disabled" );
