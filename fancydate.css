@@ -307,7 +307,12 @@
     cursor   : pointer;
 }
 
+/** this **/
 #FancyDate-title:hover #FancyDate-year-changer {
+    display : block;
+}
+/** or this **/
+#FancyDate-title.FancyDate-year-open #FancyDate-year-changer {
     display : block;
 }
 
