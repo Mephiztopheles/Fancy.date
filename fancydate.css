@@ -311,10 +311,12 @@
 #FancyDate-title:hover #FancyDate-year-changer {
     display : block;
 }
-/** or this **/
+
 #FancyDate-title.FancyDate-year-open #FancyDate-year-changer {
     display : block;
 }
+
+/** or this **/
 
 #FancyDate-year-changer {
     display    : none;
