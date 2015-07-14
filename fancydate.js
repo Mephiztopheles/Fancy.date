@@ -190,7 +190,6 @@
     };
     FancyDate.api.close            = function () {
         var SELF = this;
-        return;
         if ( !SELF.html.dialog.hasClass( 'hide' ) ) {
             SELF.element.unbind( '.' + SELF.name + ':prevent' );
             SELF.html.title.removeClass( NAME + "-year-open" );
