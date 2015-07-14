@@ -165,9 +165,10 @@
             SELF.close();
         } ).on( "input." + NAME + " paste." + NAME, function ( e ) {
             var regex = dateToRegex( SELF.settings.format );
-            console.log( regex.exec( this.value ) );
-            e.preventDefault();
-            e.stopPropagation();
+            if ( regex.exec( this.value ) === null ) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
         } );
 
 
