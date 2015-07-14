@@ -19,7 +19,6 @@
             var str = format.substring( 0, i );
             str     = escapeRegExp( str );
             str     = str.replace( /\w/g, "\\d" );
-            console.log( str );
             regex += "(^" + str + "$)";
             if ( i !== 1 ) regex += "|";
         }
@@ -166,6 +165,7 @@
         } ).on( "input." + NAME + " paste." + NAME, function ( e ) {
             var regex = dateToRegex( SELF.settings.format );
             if ( regex.exec( this.value ) === null ) {
+                console.error( "you cannot enter this char." );
                 e.preventDefault();
                 e.stopPropagation();
             }
