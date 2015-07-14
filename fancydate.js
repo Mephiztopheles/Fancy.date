@@ -8,6 +8,24 @@
         VERSION = "1.0.4",
         logged  = false;
 
+
+    function escapeRegExp( str ) {
+        return str.replace( /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&" );
+    }
+
+    function dateToRegex( format ) {
+        var regex = "";
+        for ( var i = format.length; i > 0; i-- ) {
+            var str = format.substring( 0, i );
+            str     = escapeRegExp( str );
+            str     = str.replace( /\w/g, "\\d" );
+            console.log( str );
+            regex += "(^" + str + "$)";
+            if ( i !== 1 ) regex += "|";
+        }
+        return new RegExp( regex );
+    }
+
     function findByKey( obj, index ) {
         var r,
             i = 0;
@@ -146,8 +164,8 @@
         } ).on( "blur." + NAME, function () {
             SELF.close();
         } ).on( "input." + NAME + " paste." + NAME, function ( e ) {
-            console.log( e );
-            console.log( SELF.settings.format.replace( /[A-z]/, "\d" ) );
+            var regex = dateToRegex( SELF.settings.format );
+            console.log( regex.exec( this.value ) );
             e.preventDefault();
             e.stopPropagation();
         } );
