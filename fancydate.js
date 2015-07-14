@@ -251,15 +251,15 @@
         }
 
         this.html.yearChanger.append ( ul );
-        var x  = this.current.getFullYear () - 50,
-            y  = this.current.getFullYear () + 50;
+        var x  = this.current.getFullYear () - this.settings.yearBottom,
+            y  = this.current.getFullYear () + this.settings.yearTop;
         if ( this.settings.max ) {
             x = Math.max ( x, this.settings.max.getFullYear () );
-            y = x + 50;
+            y = x + this.settings.yearTop;
         }
         if ( this.settings.min ) {
             y = Math.min ( y, this.settings.min.getFullYear () );
-            x = this.settings.max ? Math.max ( y - 50, this.settings.max.getFullYear () ) : y - 50;
+            x = this.settings.max ? Math.max ( y - this.settings.yearBottom, this.settings.max.getFullYear () ) : y - this.settings.yearBottom;
         }
         for ( y; y > x; y-- ) {
             var li = $ ( "<li/>", {
@@ -457,7 +457,10 @@
         free          : true,
         showWeekHeader: true,
         min           : false,
-        max           : false
+        max           : false,
+        yearTop       : 20,
+        yearBottom    : 50,
+        yearStatic    : false
     };
 
     FancyDate.translation = {
