@@ -146,6 +146,8 @@
         } ).on( "blur." + NAME, function () {
             SELF.close();
         } ).on( "input." + NAME + " paste." + NAME, function ( e ) {
+            console.log( e );
+            console.log( SELF.settings.format.replace( /[A-z]/, "\d" ) );
             e.preventDefault();
             e.stopPropagation();
         } );
@@ -392,7 +394,7 @@
         } );
 
         this.html.title.off( "click" ).on( "click", function () {
-            console.log("clicked title");
+            console.log( "clicked title" );
             SELF.html.title.toggleClass( NAME + "-year-open" );
         } );
 
