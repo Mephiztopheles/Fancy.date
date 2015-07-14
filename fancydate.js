@@ -193,7 +193,7 @@
         return;
         if ( !SELF.html.dialog.hasClass( 'hide' ) ) {
             SELF.element.unbind( '.' + SELF.name + ':prevent' );
-            SELF.html.body.removeClass( NAME + "-year-open" );
+            SELF.html.title.removeClass( NAME + "-year-open" );
             function hide() {
                 SELF.html.wrapper.remove();
                 SELF.html.dialog.remove();
@@ -393,7 +393,7 @@
         } );
 
         this.html.title.off( "click" ).on( "click", function () {
-            SELF.html.body.toggleClass( NAME + "-year-open" );
+            SELF.html.title.toggleClass( NAME + "-year-open" );
         } );
 
         this.html.today.off( 'click' ).on( 'click', function () {
