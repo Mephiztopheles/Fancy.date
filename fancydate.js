@@ -393,6 +393,7 @@
         } );
 
         this.html.title.off( "click" ).on( "click", function () {
+            console.log("clicked title");
             SELF.html.title.toggleClass( NAME + "-year-open" );
         } );
 
