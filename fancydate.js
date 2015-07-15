@@ -5,7 +5,7 @@
         Fancy : "1.0.2"
     } );
     var NAME    = "FancyDate",
-        VERSION = "1.0.4",
+        VERSION = "1.0.5",
         logged  = false;
 
 
@@ -15,12 +15,21 @@
 
     function dateToRegex( format ) {
         var regex = "";
+        if ( format.match( /dd|DD/ ) === null ) {
+            format = format.replace( /d|D/, "dd" );
+        }
+        if ( format.match( /mm|MM/ ) === null ) {
+            format = format.replace( /m|M/, "mm" );
+        }
+        if ( format.match( /yyyy|YYYY/ ) === null ) {
+            format = format.replace( /yyy|YYYY/, "yyyy" ).replace( /yy|YY/, "yyyy" ).replace( /y|Y/, "yyyy" );
+        }
         for ( var i = format.length; i > 0; i-- ) {
             var str = format.substring( 0, i );
             str     = escapeRegExp( str );
-            str     = str.replace( /\w/g, "\\d" );
+            str     = str.replace( /(dd)|(DD)/g, "(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])" ).replace( /(mm)|(MM)/g, "(?:0[1-9]|1[0-2])" ).replace( /(yyyy)|(YYYY)/g, "\\d\\d\\d\\d" );
             regex += "(^" + str + "$)";
-            if ( i !== 1 ) regex += "|";
+            if ( i !== 1 )regex += "|"
         }
         return new RegExp( regex );
     }
@@ -153,6 +162,7 @@
             rows         : []
         };
 
+        var oldValue = SELF.element.val();
         SELF.element.off( "." + NAME ).on( "keydown." + NAME, function ( e ) {
             setTimeout( function () {
                 if ( (e.which | e.keyCode) === 9 ) SELF.close();
@@ -163,12 +173,16 @@
         } ).on( "blur." + NAME, function () {
             SELF.close();
         } ).on( "input." + NAME + " paste." + NAME, function ( e ) {
-            var regex = dateToRegex( SELF.settings.format );
-            if ( regex.exec( this.value ) === null ) {
-                console.error( "you cannot enter this char." );
+            var regex = dateToRegex( SELF.settings.format ),
+                exec  = regex.exec( this.value );
+            if ( exec === null ) {
+                this.value = oldValue;
                 e.preventDefault();
                 e.stopPropagation();
+            } else if ( exec[ 1 ] ) {
+                SELF.select( SELF.decode( this.value ) );
             }
+            oldValue = this.value;
         } );
 
 
