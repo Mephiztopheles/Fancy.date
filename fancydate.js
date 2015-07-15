@@ -44,6 +44,16 @@
         return r;
     }
 
+    function clearTime( date ) {
+        var d = new Date( date );
+
+        d.setHours( 0 );
+        d.setMinutes( 0 );
+        d.setSeconds( 0 );
+        d.setMilliseconds( 0 );
+        return d;
+    }
+
     function FancyDate( element, settings ) {
         var SELF = this;
         if ( element[ 0 ].nodeName != 'INPUT' ) {
@@ -352,8 +362,8 @@
                 if ( this.settings.min && current.getTime() < new Date( this.settings.min ).getTime() ) d.addClass( "disabled" );
                 if ( this.settings.max && current.getTime() > new Date( this.settings.max ).getTime() ) d.addClass( "disabled" );
                 if ( current.getMonth() != this.current.getMonth() ) d.addClass( this.name + '-day-extern' );
-                if ( current.getMonth() == this.today.getMonth() && current.getDate() == this.today.getDate() && current.getFullYear() == SELF.today.getFullYear() ) d.addClass( this.name + '-day-today' );
-                if ( this.selected && current.getTime() === this.selected.getTime() ) d.addClass( this.name + '-active' );
+                if ( clearTime( current ).getTime() === clearTime( SELF.today ).getTime() ) d.addClass( this.name + '-day-today' );
+                if ( this.selected && clearTime( current ).getTime() === clearTime( this.selected ).getTime() ) d.addClass( this.name + '-active' );
 
                 current = new Date( current.getTime() + this.calculate.day );
                 this.html.days.push( d );
