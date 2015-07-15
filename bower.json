@@ -2,7 +2,7 @@
   "name": "fancy-date",
   "title": "FancyDate",
   "description": "JavaScript Datepicker-plugin for Fancy",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "main": "fancydate.js",
   "homepage": "http://mephiztopheles.wtf/fancy-date",
   "authors": [
