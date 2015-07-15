@@ -27,7 +27,7 @@
         for ( var i = format.length; i > 0; i-- ) {
             var str = format.substring( 0, i );
             str     = escapeRegExp( str );
-            str     = str.replace( /(dd)|(DD)/g, "(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])" ).replace( /(mm)|(MM)/g, "(?:0[1-9]|1[0-2])" ).replace( /(yyyy)|(YYYY)/g, "\\d\\d\\d\\d" );
+            str     = str.replace( /(dd)|(DD)/g, "(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])" ).replace( /(mm)|(MM)/g, "(?:0[1-9]|1[0-2])" ).replace( /d|D/g, "\\d" ).replace( /m|M/g, "\\d" ).replace( /(y)|(Y)/g, "\\d" );
             regex += "(^" + str + "$)";
             if ( i !== 1 )regex += "|"
         }
