@@ -5,7 +5,7 @@
         Fancy : "1.0.2"
     } );
     var NAME    = "FancyDate",
-        VERSION = "1.0.5",
+        VERSION = "1.0.6",
         logged  = false;
 
 
@@ -27,7 +27,7 @@
         for ( var i = format.length; i > 0; i-- ) {
             var str = format.substring( 0, i );
             str     = escapeRegExp( str );
-            str     = str.replace( /(dd)|(DD)/g, "(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])" ).replace( /(mm)|(MM)/g, "(?:0[1-9]|1[0-2])" ).replace( /d|D/g, "\\d" ).replace( /m|M/g, "\\d" ).replace( /(y)|(Y)/g, "\\d" );
+            str     = str.replace( /(dd)|(DD)/g, "(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])" ).replace( /(mm)|(MM)/g, "(?:0[1-9]|1[0-2])" ).replace( /d|D/, "[0-3]" ).replace( /m|M/, "[0-1]" ).replace( /(y)|(Y)/g, "[0-9]" );
             regex += "(^" + str + "$)";
             if ( i !== 1 )regex += "|"
         }
