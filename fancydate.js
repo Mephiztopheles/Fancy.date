@@ -5,7 +5,7 @@
         Fancy : "1.0.2"
     } );
     var NAME    = "FancyDate",
-        VERSION = "1.0.6",
+        VERSION = "1.0.7",
         logged  = false;
 
 
@@ -186,9 +186,13 @@
             var regex = dateToRegex( SELF.settings.format ),
                 exec  = regex.exec( this.value );
             if ( exec === null ) {
-                this.value = oldValue;
-                e.preventDefault();
-                e.stopPropagation();
+                if ( this.value ) {
+                    this.value = oldValue;
+                    e.preventDefault();
+                    e.stopPropagation();
+                } else {
+                    SELF.clear();
+                }
             } else if ( exec[ 1 ] ) {
                 SELF.select( SELF.decode( this.value ) );
             }
@@ -420,11 +424,7 @@
         } );
 
         this.html.clear.off( "click" ).on( "click", function () {
-            SELF.element.val( "" );
-            SELF.selected = null;
-            SELF.current  = SELF.today;
-            if ( typeof SELF.settings.onSelect == "function" ) SELF.settings.onSelect( SELF.selected );
-            SELF.close();
+            SELF.clear();
         } );
 
         this.html.dialog.off( "." + this.name ).on( 'selectstart.' + this.name, function ( event ) {
@@ -493,6 +493,13 @@
     FancyDate.api.setYear          = function ( year ) {
         this.current.setYear( year );
         this.create();
+    };
+    FancyDate.api.clear            = function () {
+        this.element.val( "" );
+        this.selected = null;
+        this.current  = this.today;
+        if ( typeof this.settings.onSelect == "function" ) this.settings.onSelect( this.selected );
+        this.close();
     };
     Fancy.settings[ NAME ]         = {
         format        : "dd.mm.yyyy",
