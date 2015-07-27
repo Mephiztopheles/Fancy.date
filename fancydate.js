@@ -300,22 +300,24 @@
         }
 
         this.html.yearChanger.append( ul );
-        var x  = this.current.getFullYear() - this.settings.yearBottom,
-            y  = this.current.getFullYear() + this.settings.yearTop;
+        var yearFrom = this.current.getFullYear() - this.settings.yearBottom,
+            yearTo   = this.current.getFullYear() + this.settings.yearTop;
         if ( this.settings.max ) {
-            x = Math.max( x, this.settings.max.getFullYear() );
-            y = x + this.settings.yearTop;
+            yearTo   = Math.min( yearTo, this.settings.max.getFullYear() );
+            yearFrom = yearTo - this.settings.yearBottom - this.settings.yearTop;
+            if ( this.settings.min )
+                yearFrom = Math.max( yearFrom, this.settings.min.getFullYear() );
         }
-        if ( this.settings.min ) {
-            y = Math.min( y, this.settings.min.getFullYear() );
-            x = this.settings.max ? Math.max( y - this.settings.yearBottom, this.settings.max.getFullYear() ) : y - this.settings.yearBottom;
+        else if ( this.settings.min ) {
+            yearFrom = Math.max( yearFrom, this.settings.min.getFullYear() );
+            yearTo   = yearFrom + this.settings.yearBottom + this.settings.yearTop;
+            if ( this.settings.max )
+                yearTo = Math.min( yearTo, this.settings.max.getFullYear() );
         }
-        for ( y; y >= x; y-- ) {
-            var li = $( "<li/>", {
-                html: this.translate( "month", this.current.getMonth() ) + " " + y
-            } );
+        for ( yearTo; yearTo >= yearFrom; yearTo-- ) {
+            var li = $( "<li/>", { html: this.translate( "month", this.current.getMonth() ) + " " + yearTo } );
             ul.append( li );
-            change( li, y );
+            change( li, yearTo )
         }
 
         this.html.days = [];
