@@ -5,7 +5,7 @@
         Fancy : "1.0.2"
     } );
     var NAME    = "FancyDate",
-        VERSION = "1.0.8",
+        VERSION = "1.0.9",
         logged  = false;
 
 
@@ -396,11 +396,15 @@
                 marginLeft: (window.innerWidth - this.html.dialog.outerWidth()) / 2
             } );
         } else {
-            this.html.dialog.css( {
+            var css = {
                 position: "absolute",
                 left    : this.element.offset().left,
                 top     : this.element.offset().top + this.element.outerHeight()
-            } );
+            };
+            if ( css.top + this.html.dialog.outerHeight() > window.innerHeight ) {
+                css.top = this.element.offset().top - this.html.dialog.outerHeight();
+            }
+            this.html.dialog.css( css );
         }
 
         this.addEventListener();
