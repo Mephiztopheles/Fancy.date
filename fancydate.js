@@ -481,11 +481,9 @@
     };
     FancyDate.api.select           = function( date ) {
         var SELF      = this;
-        if( this.settings.min && this.settings.min.getTime() > date.getTime() ) {
-            date = this.settings.min;
-        }
-        if( this.settings.max && this.settings.max.getTime() < date.getTime() ) {
-            date = this.settings.max;
+        if( (this.settings.min && this.settings.min.getTime() > date.getTime()) || (this.settings.max && this.settings.max.getTime() < date.getTime()) ) {
+            SELF.close();
+            return;
         }
         SELF.element.val( SELF.encode( date ) );
         SELF.selected = date;
