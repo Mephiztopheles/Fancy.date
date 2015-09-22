@@ -223,22 +223,23 @@
     padding     : 10px 10px;
     text-align  : center;
     font-size   : 14px;
-    border-top  : 1px solid #e1e1e1;
-    border-left : 1px solid #e1e1e1;
+    border-top  : 1px solid #E1E1E1;
+    border-left : 1px solid #E1E1E1;
     box-sizing  : initial;
+    color      : #000
 }
 
 .FancyDate-day.disabled {
-    background : #7e7e7e;
+    background : #7E7E7E;
     cursor     : not-allowed;
 }
 
-.FancyDate-day-today {
+.FancyDate-day-today:not(.disabled) {
     background : #8E0E0E;
     color      : #FFF
 }
 
-.FancyDate-day-extern {
+.FancyDate-day-extern:not(.disabled) {
     color : #CECECE
 }
 
@@ -259,12 +260,16 @@
     display : block;
 }
 
-#FancyDate-footer div {
+#FancyDate-footer .FancyDate-button {
     float      : left;
     width      : calc(100% / 3);
     text-align : center;
     cursor     : pointer;
     padding    : 10px 0
+}
+
+#FancyDate-footer .FancyDate-button.disabled {
+    cursor : not-allowed;
 }
 
 #FancyDate-close {
