@@ -1,16 +1,15 @@
-(function( window, $ ) {
-
+(function( window, $, Fancy ) {
     Fancy.require( {
         jQuery: false,
-        Fancy : "1.0.2"
+        Fancy : "1.0.8"
     } );
     var NAME    = "FancyDate",
-        VERSION = "1.0.10",
+        VERSION = "1.1.0",
         logged  = false;
 
 
     function escapeRegExp( str ) {
-        return str.replace( /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&" );
+        return str.replace( /[\-\[\]\/\{}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&" );
     }
 
     function dateToRegex( format ) {
@@ -544,7 +543,7 @@
         yearStatic    : false
     };
 
-    FancyDate.translation = {
+    FancyDate.translation       = {
         de: {
             month : [ 'Januar', 'Februar', 'M&auml;rz', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember' ],
             day   : {
@@ -587,11 +586,11 @@
             }
         }
     };
-    Fancy.date            = VERSION;
-    Fancy.api.date        = function( settings ) {
+    Fancy.date                  = VERSION;
+    Fancy.api.date              = function( settings ) {
         return this.set( NAME, function( el ) {
             return new FancyDate( el, settings )
         } );
     };
-
-})( window, jQuery );
+    Window.FancyDateTranslation = FancyDate.translation;
+})( window, jQuery, Fancy );
