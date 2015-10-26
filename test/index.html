@@ -10,11 +10,15 @@
 
     </head>
     <body>
-        <input type="text" placeholder="">
+        <input id="date-1" type="text" placeholder="">
+        <input id="date-2" type="text" placeholder="">
     </body>
     <script>
         $( function() {
-            Fancy( "input" ).date();
+            Fancy( "#date-1" ).date();
+            Fancy( "#date-2" ).date( {
+                format: "yyyy"
+            } );
         } );
     </script>
 </html>

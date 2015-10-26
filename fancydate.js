@@ -4,7 +4,7 @@
         Fancy : "1.0.8"
     } );
     var NAME    = "FancyDate",
-        VERSION = "1.1.0",
+        VERSION = "1.1.1",
         logged  = false;
 
 
@@ -28,7 +28,9 @@
             str     = escapeRegExp( str );
             str     = str.replace( /(dd)|(DD)/g, "(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])" ).replace( /(mm)|(MM)/g, "(?:0[1-9]|1[0-2])" ).replace( /d|D/, "[0-3]" ).replace( /m|M/, "[0-1]" ).replace( /(y)|(Y)/g, "[0-9]" );
             regex += "(^" + str + "$)";
-            if( i !== 1 )regex += "|"
+            if( i !== 1 ) {
+                regex += "|"
+            }
         }
         return new RegExp( regex );
     }
@@ -37,7 +39,9 @@
         var r,
             i = 0;
         for( var k in obj ) {
-            if( i == index ) r = k;
+            if( i == index ) {
+                r = k;
+            }
             i++;
         }
         return r;
@@ -174,11 +178,14 @@
         var oldValue = SELF.element.val();
         SELF.element.off( "." + NAME ).on( "keydown." + NAME, function( e ) {
             setTimeout( function() {
-                if( (e.which | e.keyCode) === 9 ) SELF.close();
+                if( (e.which | e.keyCode) === 9 ) {
+                    SELF.close();
+                }
             }, 2 );
         } ).on( "focus." + NAME, function() {
-            if( !SELF.visible && SELF.settings.query( SELF.element ) )
+            if( !SELF.visible && SELF.settings.query( SELF.element ) ) {
                 SELF.open();
+            }
         } ).on( "blur." + NAME, function() {
             SELF.close();
         } ).on( "input." + NAME + " paste." + NAME, function( e ) {
@@ -218,10 +225,12 @@
             SELF.html.dialog.hide();
 
             SELF.html.today.removeClass( "disabled" );
-            if( SELF.settings.max && SELF.today > SELF.settings.max )
+            if( SELF.settings.max && SELF.today > SELF.settings.max ) {
                 SELF.html.today.addClass( "disabled" );
-            if( SELF.settings.min && SELF.today < SELF.settings.min )
+            }
+            if( SELF.settings.min && SELF.today < SELF.settings.min ) {
                 SELF.html.today.addClass( "disabled" );
+            }
 
             function show() {
                 SELF.html.dialog.show();
@@ -310,14 +319,16 @@
         if( this.settings.max ) {
             yearTo   = Math.min( yearTo, this.settings.max.getFullYear() );
             yearFrom = yearTo - this.settings.yearBottom - this.settings.yearTop;
-            if( this.settings.min )
+            if( this.settings.min ) {
                 yearFrom = Math.max( yearFrom, this.settings.min.getFullYear() );
+            }
         }
         else if( this.settings.min ) {
             yearFrom = Math.max( yearFrom, this.settings.min.getFullYear() );
             yearTo   = yearFrom + this.settings.yearBottom + this.settings.yearTop;
-            if( this.settings.max )
+            if( this.settings.max ) {
                 yearTo = Math.min( yearTo, this.settings.max.getFullYear() );
+            }
         }
         for( yearTo; yearTo >= yearFrom; yearTo-- ) {
             var li = $( "<li/>", { html: this.translate( "month", this.current.getMonth() ) + " " + yearTo } );
@@ -370,13 +381,23 @@
                     html   : current.getDate()
                 } ).data( 'date', current );
 
-                if( this.settings.min && current.getTime() < new Date( this.settings.min ).getTime() ) d.addClass( "disabled" );
-                if( this.settings.max && current.getTime() > new Date( this.settings.max ).getTime() ) d.addClass( "disabled" );
-                if( current.getMonth() != this.current.getMonth() ) d.addClass( this.name + '-day-extern' );
-                if( clearTime( current ).getTime() === clearTime( SELF.today ).getTime() ) d.addClass( this.name + '-day-today' );
-                if( this.selected && clearTime( current ).getTime() === clearTime( this.selected ).getTime() ) d.addClass( this.name + '-active' );
+                if( this.settings.min && current.getTime() < new Date( this.settings.min ).getTime() ) {
+                    d.addClass( "disabled" );
+                }
+                if( this.settings.max && current.getTime() > new Date( this.settings.max ).getTime() ) {
+                    d.addClass( "disabled" );
+                }
+                if( current.getMonth() != this.current.getMonth() ) {
+                    d.addClass( this.name + '-day-extern' );
+                }
+                if( clearTime( current ).getTime() === clearTime( SELF.today ).getTime() ) {
+                    d.addClass( this.name + '-day-today' );
+                }
+                if( this.selected && clearTime( current ).getTime() === clearTime( this.selected ).getTime() ) {
+                    d.addClass( this.name + '-active' );
+                }
 
-                current = new Date( current.getTime() + this.calculate.day );
+                current = new Date( current.setDate( current.getDate() + 1 ) );
                 this.html.days.push( d );
                 this.html.rows[ i ].append( d );
 
@@ -420,8 +441,9 @@
 
         for( var i = 0; i < this.html.days.length; i++ ) {
             $( this.html.days[ i ] ).on( 'click', function( e ) {
-                if( !$( this ).hasClass( "disabled" ) )
+                if( !$( this ).hasClass( "disabled" ) ) {
                     SELF.select( new Date( $( this ).data( 'date' ) ) );
+                }
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
@@ -454,10 +476,12 @@
 
         this.html.today.off( 'click' ).on( 'click', function() {
             var dis = false;
-            if( SELF.settings.max && SELF.today > SELF.settings.max )
+            if( SELF.settings.max && SELF.today > SELF.settings.max ) {
                 dis = true;
-            if( SELF.settings.min && SELF.today < SELF.settings.min )
+            }
+            if( SELF.settings.min && SELF.today < SELF.settings.min ) {
                 dis = true;
+            }
 
             if( !dis ) {
                 SELF.select( SELF.today );
@@ -486,7 +510,9 @@
         }
         SELF.element.val( SELF.encode( date ) );
         SELF.selected = date;
-        if( typeof SELF.settings.onSelect == "function" ) SELF.settings.onSelect( SELF.selected );
+        if( typeof SELF.settings.onSelect == "function" ) {
+            SELF.settings.onSelect( SELF.selected );
+        }
         SELF.close();
         return this;
     };
@@ -510,7 +536,9 @@
         if( typeof t[ 0 ] == "undefined" && typeof value == "number" ) {
             value = findByKey( t, value );
         }
-        if( t ) t = FancyDate.translation[ l ][ key ][ value ];
+        if( t ) {
+            t = FancyDate.translation[ l ][ key ][ value ];
+        }
         return t;
     };
     FancyDate.api.setYear          = function( year ) {
@@ -521,7 +549,9 @@
         this.element.val( "" );
         this.selected = null;
         this.current  = this.today;
-        if( typeof this.settings.onSelect == "function" ) this.settings.onSelect( this.selected );
+        if( typeof this.settings.onSelect == "function" ) {
+            this.settings.onSelect( this.selected );
+        }
         this.close();
     };
     Fancy.settings[ NAME ]         = {

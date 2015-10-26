@@ -226,7 +226,7 @@
     border-top  : 1px solid #E1E1E1;
     border-left : 1px solid #E1E1E1;
     box-sizing  : initial;
-    color      : #000
+    color       : #000
 }
 
 .FancyDate-day.disabled {
@@ -332,6 +332,7 @@
     left       : 0;
     right      : -17px;
     font-size  : 16px;
+    z-index    : 1;
 }
 
 #FancyDate-year-changer ul {
