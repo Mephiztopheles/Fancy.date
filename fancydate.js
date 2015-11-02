@@ -4,7 +4,7 @@
         Fancy : "1.0.8"
     } );
     var NAME    = "FancyDate",
-        VERSION = "1.1.1",
+        VERSION = "1.1.2",
         logged  = false;
 
 
