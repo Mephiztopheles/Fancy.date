@@ -622,5 +622,5 @@
             return new FancyDate( el, settings )
         } );
     };
-    Window.FancyDateTranslation = FancyDate.translation;
+    window.FancyDateTranslation = FancyDate.translation;
 })( window, jQuery, Fancy );
