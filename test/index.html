@@ -17,7 +17,8 @@
         $( function() {
             Fancy( "#date-1" ).date();
             Fancy( "#date-2" ).date( {
-                format: "yyyy"
+                format: "yyyy",
+                min   : new Date( 2016, 1, 1 )
             } );
         } );
     </script>

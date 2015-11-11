@@ -1,10 +1,10 @@
-(function ( window, $, Fancy ) {
+(function( window, $, Fancy ) {
     Fancy.require( {
         jQuery: false,
         Fancy : "1.0.8"
     } );
     var NAME    = "FancyDate",
-        VERSION = "1.1.2",
+        VERSION = "1.1.3",
         logged  = false;
 
 
@@ -14,21 +14,21 @@
 
     function dateToRegex( format ) {
         var regex = "";
-        if ( format.match( /dd|DD/ ) === null ) {
+        if( format.match( /dd|DD/ ) === null ) {
             format = format.replace( /d|D/, "dd" );
         }
-        if ( format.match( /mm|MM/ ) === null ) {
+        if( format.match( /mm|MM/ ) === null ) {
             format = format.replace( /m|M/, "mm" );
         }
-        if ( format.match( /yyyy|YYYY/ ) === null ) {
+        if( format.match( /yyyy|YYYY/ ) === null ) {
             format = format.replace( /yyy|YYYY/, "yyyy" ).replace( /yy|YY/, "yyyy" ).replace( /y|Y/, "yyyy" );
         }
-        for ( var i = format.length; i > 0; i-- ) {
+        for( var i = format.length; i > 0; i-- ) {
             var str = format.substring( 0, i );
             str     = escapeRegExp( str );
             str     = str.replace( /(dd)|(DD)/g, "(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])" ).replace( /(mm)|(MM)/g, "(?:0[1-9]|1[0-2])" ).replace( /d|D/, "[0-3]" ).replace( /m|M/, "[0-1]" ).replace( /(y)|(Y)/g, "[0-9]" );
             regex += "(^" + str + "$)";
-            if ( i !== 1 ) {
+            if( i !== 1 ) {
                 regex += "|"
             }
         }
@@ -38,8 +38,8 @@
     function findByKey( obj, index ) {
         var r,
             i = 0;
-        for ( var k in obj ) {
-            if ( i == index ) {
+        for( var k in obj ) {
+            if( i == index ) {
                 r = k;
             }
             i++;
@@ -59,7 +59,7 @@
 
     function FancyDate( element, settings ) {
         var SELF = this;
-        if ( element[ 0 ].nodeName != 'INPUT' ) {
+        if( element[ 0 ].nodeName != 'INPUT' ) {
             console.error( NAME + ' needs an input to be bound to!' );
             return;
         }
@@ -80,9 +80,9 @@
         SELF.today    = SELF.decode( SELF.encode( new Date() ) );
         SELF.current  = SELF.element.val() ? SELF.decode( SELF.element.val() ) : SELF.settings.current || new Date();
         SELF.selected = SELF.decode( SELF.element.val() );
-        Fancy.watch( SELF, "selected", function ( prop, old, val ) {
-            if ( val && val != old ) {
-                setTimeout( function () {
+        Fancy.watch( SELF, "selected", function( prop, old, val ) {
+            if( val && val != old ) {
+                setTimeout( function() {
                     SELF.element.val( SELF.encode( SELF.selected ) );
                 }, 0 );
                 return new Date( val );
@@ -98,9 +98,9 @@
     FancyDate.api = FancyDate.prototype = {};
     FancyDate.api.version          = VERSION;
     FancyDate.api.name             = NAME;
-    FancyDate.api.init             = function () {
+    FancyDate.api.init             = function() {
         var SELF = this;
-        if ( !logged ) {
+        if( !logged ) {
             logged = true;
             Fancy.version( SELF );
         }
@@ -112,7 +112,7 @@
             } ),
             dialog       : $( '<div/>', {
                 id: SELF.name + '-dialog'
-            } ).attr( 'onselectstart', function () {
+            } ).attr( 'onselectstart', function() {
                 return false;
             } ),
             inner        : $( '<div/>', {
@@ -176,30 +176,30 @@
         };
 
         var oldValue = SELF.element.val();
-        SELF.element.off( "." + NAME ).on( "keydown." + NAME, function ( e ) {
-            setTimeout( function () {
-                if ( (e.which | e.keyCode) === 9 ) {
+        SELF.element.off( "." + NAME ).on( "keydown." + NAME, function( e ) {
+            setTimeout( function() {
+                if( (e.which | e.keyCode) === 9 ) {
                     SELF.close();
                 }
             }, 2 );
-        } ).on( "focus." + NAME, function () {
-            if ( !SELF.visible && SELF.settings.query( SELF.element ) ) {
+        } ).on( "focus." + NAME, function() {
+            if( !SELF.visible && SELF.settings.query( SELF.element ) ) {
                 SELF.open();
             }
-        } ).on( "blur." + NAME, function () {
+        } ).on( "blur." + NAME, function() {
             SELF.close();
-        } ).on( "input." + NAME + " paste." + NAME, function ( e ) {
+        } ).on( "input." + NAME + " paste." + NAME, function( e ) {
             var regex = dateToRegex( SELF.settings.format ),
                 exec  = regex.exec( this.value );
-            if ( exec === null ) {
-                if ( this.value ) {
+            if( exec === null ) {
+                if( this.value ) {
                     this.value = oldValue;
                     e.preventDefault();
                     e.stopPropagation();
                 } else {
                     SELF.clear();
                 }
-            } else if ( exec[ 1 ] ) {
+            } else if( exec[ 1 ] ) {
                 SELF.select( SELF.decode( this.value ) );
             }
             oldValue = this.value;
@@ -207,10 +207,10 @@
 
 
     };
-    FancyDate.api.open             = function () {
+    FancyDate.api.open             = function() {
         var SELF = this;
-        if ( !SELF.element[ 0 ].readOnly && !SELF.element[ 0 ].disabled ) {
-            if ( this.settings.free ) {
+        if( !SELF.element[ 0 ].readOnly && !SELF.element[ 0 ].disabled ) {
+            if( this.settings.free ) {
                 $( "body" ).append( SELF.html.wrapper ).addClass( SELF.name );
                 SELF.html.wrapper.append( SELF.html.dialog );
             } else {
@@ -225,10 +225,10 @@
             SELF.html.dialog.hide();
 
             SELF.html.today.removeClass( "disabled" );
-            if ( SELF.settings.max && SELF.today > SELF.settings.max ) {
+            if( SELF.settings.max && SELF.today > SELF.settings.max ) {
                 SELF.html.today.addClass( "disabled" );
             }
-            if ( SELF.settings.min && SELF.today < SELF.settings.min ) {
+            if( SELF.settings.min && SELF.today < SELF.settings.min ) {
                 SELF.html.today.addClass( "disabled" );
             }
 
@@ -239,8 +239,8 @@
                 SELF.settings.onOpen.call( SELF );
             }
 
-            if ( SELF.settings.animated ) {
-                setTimeout( function () {
+            if( SELF.settings.animated ) {
+                setTimeout( function() {
                     show();
                     SELF.html.dialog.addClass( 'show' ).removeClass( 'hide' );
                 }, 0 );
@@ -251,9 +251,9 @@
 
         return SELF;
     };
-    FancyDate.api.close            = function () {
+    FancyDate.api.close            = function() {
         var SELF = this;
-        if ( !SELF.html.dialog.hasClass( 'hide' ) ) {
+        if( !SELF.html.dialog.hasClass( 'hide' ) ) {
             SELF.element.unbind( '.' + SELF.name + ':prevent' );
             SELF.html.title.removeClass( NAME + "-year-open" );
             function hide() {
@@ -269,7 +269,7 @@
                 $( 'body' ).removeClass( SELF.name );
             }
 
-            if ( SELF.settings.animated ) {
+            if( SELF.settings.animated ) {
                 setTimeout( hide, 300 );
                 SELF.html.dialog.addClass( 'hide' ).removeClass( 'show' );
             } else {
@@ -279,25 +279,38 @@
 
         return SELF;
     };
-    FancyDate.api.update           = function () {
+    FancyDate.api.update           = function() {
         var SELF = this;
         SELF.html.calendar.html( '' );
         SELF.html.title.html( SELF.html.month.html( SELF.translate( 'month', SELF.current.getMonth() ) ) ).append( SELF.html.year.html( SELF.current.getFullYear() ) );
         SELF.create();
     };
-    FancyDate.api.create           = function () {
-        var SELF    = this,
-            current = new Date( this.current.getFullYear(), this.current.getMonth(), 1 ),
-            i       = 0,
-            n       = 0;
+    FancyDate.api.create           = function() {
+        var SELF = this,
+            current,
+            i    = 0,
+            n    = 0;
+        if( this.settings.checkMinAndMax ) {
+            if( this.settings.max ) {
+                if( this.settings.max < this.current ) {
+                    this.current = new Date( this.settings.max.getFullYear(), this.settings.max.getMonth(), this.settings.max.getDate() );
+                }
+            }
+            if( this.settings.min ) {
+                if( this.settings.min > this.current ) {
+                    this.current = new Date( this.settings.min.getFullYear(), this.settings.min.getMonth(), this.settings.min.getDate() );
+                }
+            }
+        }
         this.html.title.append( this.html.month.html( this.translate( "month", this.current.getMonth() ) ) ).append( this.html.year.html( this.current.getFullYear() ) );
         this.html.title.append( this.html.yearChanger );
         this.html.yearChanger.children().remove();
         var c;
-        if ( current.getDay() != 1 && current.getDay() != 0 ) {
+        current = new Date( this.current.getFullYear(), this.current.getMonth(), 1 );
+        if( current.getDay() != 1 && current.getDay() != 0 ) {
             c       = new Date( this.current.getFullYear(), this.current.getMonth(), 0 );
             current = new Date( this.current.getFullYear(), this.current.getMonth() - 1, (c.getDate() - current.getDay() + 2) );
-        } else if ( current.getDay() == 0 ) {
+        } else if( current.getDay() == 0 ) {
             c       = new Date( this.current.getFullYear(), this.current.getMonth(), 0 );
             current = new Date( this.current.getFullYear(), this.current.getMonth() - 1, (c.getDate() - 5) );
         } else {
@@ -305,10 +318,10 @@
             current = new Date( this.current.getFullYear(), this.current.getMonth() - 1, (c.getDate() - 6) );
         }
 
-        var ul       = $( "<ul/>" );
+        var ul = $( "<ul/>" );
 
         function change( li, y ) {
-            li.on( "click", function () {
+            li.on( "click", function() {
                 SELF.setYear( y );
             } );
         }
@@ -316,21 +329,21 @@
         this.html.yearChanger.append( ul );
         var yearFrom = this.current.getFullYear() - this.settings.yearBottom,
             yearTo   = this.current.getFullYear() + this.settings.yearTop;
-        if ( this.settings.max ) {
+        if( this.settings.max ) {
             yearTo   = Math.min( yearTo, this.settings.max.getFullYear() );
             yearFrom = yearTo - this.settings.yearBottom - this.settings.yearTop;
-            if ( this.settings.min ) {
+            if( this.settings.min ) {
                 yearFrom = Math.max( yearFrom, this.settings.min.getFullYear() );
             }
         }
-        else if ( this.settings.min ) {
+        else if( this.settings.min ) {
             yearFrom = Math.max( yearFrom, this.settings.min.getFullYear() );
             yearTo   = yearFrom + this.settings.yearBottom + this.settings.yearTop;
-            if ( this.settings.max ) {
+            if( this.settings.max ) {
                 yearTo = Math.min( yearTo, this.settings.max.getFullYear() );
             }
         }
-        for ( yearTo; yearTo >= yearFrom; yearTo-- ) {
+        for( yearTo; yearTo >= yearFrom; yearTo-- ) {
             var li = $( "<li/>", { html: this.translate( "month", this.current.getMonth() ) + " " + yearTo } );
             ul.append( li );
             change( li, yearTo )
@@ -340,7 +353,7 @@
         this.html.rows = [];
 
         this.html.calendar.children().remove();
-        if ( this.settings.showWeekHeader ) {
+        if( this.settings.showWeekHeader ) {
             var rowh = $( "<div/>", {
                 id: this.name + "-rowh"
             } );
@@ -364,15 +377,15 @@
             createHeader( "su" );
 
         }
-        while ( i < 6 ) {
+        while( i < 6 ) {
             i++;
             this.html.rows[ i ] = $( '<div/>', {
                 id     : this.name + '.row-' + i,
                 "class": this.name + '-row'
             } );
             this.html.calendar.append( this.html.rows[ i ] );
-            var day             = 0;
-            while ( day < 7 ) {
+            var day = 0;
+            while( day < 7 ) {
                 day++;
                 n++;
                 var d = $( '<div/>', {
@@ -381,19 +394,19 @@
                     html   : current.getDate()
                 } ).data( 'date', current.getTime() );
 
-                if ( this.settings.min && current.getTime() < new Date( this.settings.min ).getTime() ) {
+                if( this.settings.min && current.getTime() < new Date( this.settings.min ).getTime() ) {
                     d.addClass( "disabled" );
                 }
-                if ( this.settings.max && current.getTime() > new Date( this.settings.max ).getTime() ) {
+                if( this.settings.max && current.getTime() > new Date( this.settings.max ).getTime() ) {
                     d.addClass( "disabled" );
                 }
-                if ( current.getMonth() != this.current.getMonth() ) {
+                if( current.getMonth() != this.current.getMonth() ) {
                     d.addClass( this.name + '-day-extern' );
                 }
-                if ( clearTime( current ).getTime() === clearTime( SELF.today ).getTime() ) {
+                if( clearTime( current ).getTime() === clearTime( SELF.today ).getTime() ) {
                     d.addClass( this.name + '-day-today' );
                 }
-                if ( this.selected && clearTime( current ).getTime() === clearTime( this.selected ).getTime() ) {
+                if( this.selected && clearTime( current ).getTime() === clearTime( this.selected ).getTime() ) {
                     d.addClass( this.name + '-active' );
                 }
 
@@ -405,18 +418,18 @@
         }
 
         var width = this.html.body.outerWidth() / 7;
-        $( this.html.days ).each( function () {
+        $( this.html.days ).each( function() {
             $( this ).css( {
                 width: parseInt( width + 1 - parseInt( $( this ).css( "paddingLeft" ) ) - parseInt( $( this ).css( "paddingRight" ) ) )
             } );
         } );
-        $( "." + this.name + "-rowh" ).each( function () {
+        $( "." + this.name + "-rowh" ).each( function() {
             $( this ).css( {
                 width: parseInt( width + 1 - parseInt( $( this ).css( "paddingLeft" ) ) - parseInt( $( this ).css( "paddingRight" ) ) )
             } );
         } );
 
-        if ( this.settings.free ) {
+        if( this.settings.free ) {
             this.html.dialog.css( {
                 marginTop : (window.innerHeight - this.html.dialog.outerHeight()) / 2,
                 marginLeft: (window.innerWidth - this.html.dialog.outerWidth()) / 2
@@ -427,7 +440,7 @@
                 left    : this.element.offset().left,
                 top     : this.element.offset().top + this.element.outerHeight()
             };
-            if ( css.top + this.html.dialog.outerHeight() > window.innerHeight ) {
+            if( css.top + this.html.dialog.outerHeight() > window.innerHeight ) {
                 css.top = this.element.offset().top - this.html.dialog.outerHeight();
             }
             this.html.dialog.css( css );
@@ -436,12 +449,12 @@
         this.addEventListener();
         return this;
     };
-    FancyDate.api.addEventListener = function () {
+    FancyDate.api.addEventListener = function() {
         var SELF = this;
 
-        for ( var i = 0; i < this.html.days.length; i++ ) {
-            $( this.html.days[ i ] ).on( 'click', function ( e ) {
-                if ( !$( this ).hasClass( "disabled" ) ) {
+        for( var i = 0; i < this.html.days.length; i++ ) {
+            $( this.html.days[ i ] ).on( 'click', function( e ) {
+                if( !$( this ).hasClass( "disabled" ) ) {
                     SELF.select( new Date( $( this ).data( 'date' ) ) );
                 }
                 e.preventDefault();
@@ -450,78 +463,78 @@
             } );
         }
 
-        this.html.dialog.off( "mousedown" ).on( "mousedown", function ( e ) {
+        this.html.dialog.off( "mousedown" ).on( "mousedown", function( e ) {
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
         } );
 
-        this.html.clear.off( "click" ).on( "click", function () {
+        this.html.clear.off( "click" ).on( "click", function() {
             SELF.clear();
         } );
 
-        this.html.dialog.off( "." + this.name ).on( 'selectstart.' + this.name, function ( event ) {
+        this.html.dialog.off( "." + this.name ).on( 'selectstart.' + this.name, function( event ) {
             "use strict";
             event.preventDefault();
         } );
 
-        this.html.close.off( "click" ).on( 'click', function () {
+        this.html.close.off( "click" ).on( 'click', function() {
             SELF.close();
         } );
 
-        this.html.title.off( "click" ).on( "click", function () {
+        this.html.title.off( "click" ).on( "click", function() {
             console.log( "clicked title" );
             SELF.html.title.toggleClass( NAME + "-year-open" );
         } );
 
-        this.html.today.off( 'click' ).on( 'click', function () {
+        this.html.today.off( 'click' ).on( 'click', function() {
             var dis = false;
-            if ( SELF.settings.max && SELF.today > SELF.settings.max ) {
+            if( SELF.settings.max && SELF.today > SELF.settings.max ) {
                 dis = true;
             }
-            if ( SELF.settings.min && SELF.today < SELF.settings.min ) {
+            if( SELF.settings.min && SELF.today < SELF.settings.min ) {
                 dis = true;
             }
 
-            if ( !dis ) {
+            if( !dis ) {
                 SELF.select( SELF.today );
                 SELF.current = SELF.today;
                 SELF.close();
             }
         } );
 
-        this.html.next.off( 'click' ).on( 'click', function () {
+        this.html.next.off( 'click' ).on( 'click', function() {
             SELF.current = new Date( SELF.current.getFullYear(), SELF.current.getMonth() + 1, 1 );
             SELF.update();
         } );
 
-        this.html.previous.off( 'click' ).on( 'click', function () {
+        this.html.previous.off( 'click' ).on( 'click', function() {
             SELF.current = new Date( SELF.current.getFullYear(), SELF.current.getMonth() - 1, 1 );
             SELF.update();
         } );
 
         return this;
     };
-    FancyDate.api.select           = function ( date ) {
-        var SELF      = this;
-        if ( (this.settings.min && this.settings.min.getTime() > date.getTime()) || (this.settings.max && this.settings.max.getTime() < date.getTime()) ) {
+    FancyDate.api.select           = function( date ) {
+        var SELF = this;
+        if( (this.settings.min && this.settings.min.getTime() > date.getTime()) || (this.settings.max && this.settings.max.getTime() < date.getTime()) ) {
             SELF.close();
             return;
         }
         SELF.element.val( SELF.encode( date ) );
         SELF.selected = date;
-        if ( typeof SELF.settings.onSelect == "function" ) {
+        if( typeof SELF.settings.onSelect == "function" ) {
             SELF.settings.onSelect( SELF.selected );
         }
         SELF.close();
         return this;
     };
-    FancyDate.api.encode           = function ( date, format ) {
+    FancyDate.api.encode           = function( date, format ) {
         var SELF = this;
         format   = format || SELF.settings.format;
         return format.replace( 'dd', (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) ).replace( 'mm', (date.getMonth() < 9 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) ).replace( 'yyyy', date.getFullYear().toString() );
     };
-    FancyDate.api.decode           = function ( date ) {
+    FancyDate.api.decode           = function( date ) {
         var SELF   = this;
         var format = {
             d: parseInt( date.substring( SELF.settings.format.indexOf( 'dd' ), SELF.settings.format.indexOf( 'dd' ) + 2 ) ),
@@ -530,26 +543,26 @@
         };
         return new Date( format.y, format.m, format.d );
     };
-    FancyDate.api.translate        = function ( key, value ) {
+    FancyDate.api.translate        = function( key, value ) {
         var l = FancyDate.translation[ navigator.language ] ? navigator.language : 'en',
             t = FancyDate.translation[ l ][ key ];
-        if ( typeof t[ 0 ] == "undefined" && typeof value == "number" ) {
+        if( typeof t[ 0 ] == "undefined" && typeof value == "number" ) {
             value = findByKey( t, value );
         }
-        if ( t ) {
+        if( t ) {
             t = FancyDate.translation[ l ][ key ][ value ];
         }
         return t;
     };
-    FancyDate.api.setYear          = function ( year ) {
+    FancyDate.api.setYear          = function( year ) {
         this.current.setYear( year );
         this.create();
     };
-    FancyDate.api.clear            = function () {
+    FancyDate.api.clear            = function() {
         this.element.val( "" );
         this.selected = null;
         this.current  = this.today;
-        if ( typeof this.settings.onSelect == "function" ) {
+        if( typeof this.settings.onSelect == "function" ) {
             this.settings.onSelect( this.selected );
         }
         this.close();
@@ -557,10 +570,10 @@
     Fancy.settings[ NAME ]         = {
         format        : "dd.mm.yyyy",
         animated      : true,
-        onSelect      : function () {},
-        onOpen        : function () {},
-        onClose       : function () {},
-        query         : function () {
+        onSelect      : function() {},
+        onOpen        : function() {},
+        onClose       : function() {},
+        query         : function() {
             return true;
         },
         current       : false,
@@ -570,7 +583,8 @@
         max           : false,
         yearTop       : 20,
         yearBottom    : 50,
-        yearStatic    : false
+        yearStatic    : false,
+        checkMinAndMax: true
     };
 
     FancyDate.translation       = {
@@ -617,8 +631,8 @@
         }
     };
     Fancy.date                  = VERSION;
-    Fancy.api.date              = function ( settings ) {
-        return this.set( NAME, function ( el ) {
+    Fancy.api.date              = function( settings ) {
+        return this.set( NAME, function( el ) {
             return new FancyDate( el, settings )
         } );
     };
