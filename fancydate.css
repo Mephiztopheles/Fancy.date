@@ -166,7 +166,8 @@
     font-size   : 20px;
     float       : left;
     line-height : 40px;
-    height      : 40px padding : 0 8 px;
+    height      : 40px;
+    padding     : 0 8px;
 }
 
 #FancyDate-year {
