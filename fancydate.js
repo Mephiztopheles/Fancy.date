@@ -309,7 +309,7 @@
         this.html.title.append( this.html.yearChanger );
         this.html.yearChanger.children().remove();
         var c;
-        current  = new Date( this.current.getFullYear(), this.current.getMonth(), 1 );
+        current = new Date( this.current.getFullYear(), this.current.getMonth(), 1 );
         if ( current.getDay() != 1 && current.getDay() != 0 ) {
             c       = new Date( this.current.getFullYear(), this.current.getMonth(), 0 );
             current = new Date( this.current.getFullYear(), this.current.getMonth() - 1, (c.getDate() - current.getDay() + 2) );
@@ -321,7 +321,7 @@
             current = new Date( this.current.getFullYear(), this.current.getMonth() - 1, (c.getDate() - 6) );
         }
 
-        var ul       = $( "<ul/>" );
+        var ul = $( "<ul/>" );
 
         function change( li, y ) {
             li.on( "click", function () {
@@ -387,7 +387,7 @@
                 "class": this.name + '-row'
             } );
             this.html.calendar.append( this.html.rows[ i ] );
-            var day             = 0;
+            var day = 0;
             while ( day < 7 ) {
                 day++;
                 n++;
@@ -518,7 +518,7 @@
         return this;
     };
     FancyDate.api.select           = function ( date ) {
-        var SELF      = this;
+        var SELF = this;
         if ( (this.settings.min && this.settings.min.getTime() > date.getTime()) || (this.settings.max && this.settings.max.getTime() < date.getTime()) ) {
             SELF.close();
             return;
