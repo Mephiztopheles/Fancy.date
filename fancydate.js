@@ -77,7 +77,7 @@
         SELF.version = VERSION;
         SELF.name    = NAME;
 
-        SELF.today    = SELF.decode( SELF.encode( new Date() ) );
+        SELF.today    = clearTime( new Date() );
         SELF.current  = SELF.element.val() ? SELF.decode( SELF.element.val() ) : SELF.settings.current || new Date();
         SELF.selected = SELF.decode( SELF.element.val() );
         Fancy.watch( SELF, "selected", function ( prop, old, val ) {
@@ -230,7 +230,7 @@
             SELF.html.footer.html( SELF.html.close ).append( SELF.html.today ).append( SELF.html.clear );
 
             SELF.html.dialog.hide();
-
+            console.log( SELF );
             SELF.html.today.removeClass( "disabled" );
             if ( SELF.settings.max ) {
                 if ( SELF.current > SELF.settings.max ) {
