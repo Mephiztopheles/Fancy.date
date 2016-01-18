@@ -232,12 +232,23 @@
             SELF.html.dialog.hide();
 
             SELF.html.today.removeClass( "disabled" );
-            if ( SELF.settings.max && SELF.today > SELF.settings.max ) {
-                SELF.html.today.addClass( "disabled" );
+            if ( SELF.settings.max ) {
+                if ( SELF.current > SELF.settings.max ) {
+                    SELF.current = new Date( SELF.settings.max.getFullYear(), SELF.settings.max.getMonth(), SELF.settings.max.getDate() );
+                }
+                if ( SELF.today > SELF.settings.max ) {
+                    SELF.html.today.addClass( "disabled" );
+                }
             }
-            if ( SELF.settings.min && SELF.today < SELF.settings.min ) {
-                SELF.html.today.addClass( "disabled" );
+            if ( SELF.settings.min ) {
+                if ( SELF.current < SELF.settings.min ) {
+                    SELF.current = new Date( SELF.settings.min.getFullYear(), SELF.settings.min.getMonth(), SELF.settings.min.getDate() );
+                }
+                if ( SELF.today < SELF.settings.min ) {
+                    SELF.html.today.addClass( "disabled" );
+                }
             }
+
 
             function show() {
                 SELF.html.dialog.show();
