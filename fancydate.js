@@ -4,7 +4,7 @@
         Fancy : "1.0.8"
     } );
     var NAME    = "FancyDate",
-        VERSION = "1.1.4",
+        VERSION = "1.2.0",
         logged  = false;
 
 
@@ -182,7 +182,11 @@
                     SELF.close();
                 }
             }, 2 );
-        } ).on( "focus." + NAME, function () {
+        } ).on( "focus." + NAME + "touchstart." + NAME, function ( e ) {
+            if ( SELF.settings.preventMobileKeyboard ) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             if ( !SELF.visible && SELF.settings.query( SELF.element ) ) {
                 SELF.open();
             }
@@ -570,23 +574,24 @@
         this.close();
     };
     Fancy.settings[ NAME ]         = {
-        format        : "dd.mm.yyyy",
-        animated      : true,
-        onSelect      : function () {},
-        onOpen        : function () {},
-        onClose       : function () {},
-        query         : function () {
+        format               : "dd.mm.yyyy",
+        animated             : true,
+        onSelect             : function () {},
+        onOpen               : function () {},
+        onClose              : function () {},
+        query                : function () {
             return true;
         },
-        current       : false,
-        free          : true,
-        showWeekHeader: true,
-        min           : false,
-        max           : false,
-        yearTop       : 20,
-        yearBottom    : 50,
-        yearStatic    : false,
-        checkMinAndMax: true
+        current              : false,
+        free                 : true,
+        showWeekHeader       : true,
+        min                  : false,
+        max                  : false,
+        yearTop              : 20,
+        yearBottom           : 50,
+        yearStatic           : false,
+        checkMinAndMax       : true,
+        preventMobileKeyboard: true
     };
 
     FancyDate.translation       = {
