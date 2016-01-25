@@ -4,7 +4,7 @@
         Fancy : "1.0.8"
     } );
     var NAME    = "FancyDate",
-        VERSION = "1.2.0",
+        VERSION = "1.2.1",
         logged  = false;
 
 
@@ -182,10 +182,16 @@
                     SELF.close();
                 }
             }, 2 );
-        } ).on( "focus." + NAME + "touchstart." + NAME, function ( e ) {
+        } ).on( "focus." + NAME + " touchstart." + NAME, function ( e ) {
             if ( SELF.settings.preventMobileKeyboard ) {
                 e.preventDefault();
                 e.stopPropagation();
+                $( "body" ).on( "click." + NAME, function ( e ) {
+                    if ( !$( e.target ).closest( "#FancyDate-dialog" ).length ) {
+                        $( "body" ).off( "click." + NAME );
+                        SELF.close();
+                    }
+                } );
             }
             if ( !SELF.visible && SELF.settings.query( SELF.element ) ) {
                 SELF.open();
@@ -230,7 +236,6 @@
             SELF.html.footer.html( SELF.html.close ).append( SELF.html.today ).append( SELF.html.clear );
 
             SELF.html.dialog.hide();
-            console.log( SELF );
             SELF.html.today.removeClass( "disabled" );
             if ( SELF.settings.max ) {
                 if ( SELF.current > SELF.settings.max ) {
