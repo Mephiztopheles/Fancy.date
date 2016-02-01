@@ -4,7 +4,7 @@
         Fancy : "1.0.8"
     } );
     var NAME    = "FancyDate",
-        VERSION = "1.2.1",
+        VERSION = "1.2.2",
         logged  = false;
 
 
@@ -57,6 +57,13 @@
         return d;
     }
 
+    /**
+     *
+     * @param element
+     * @param settings
+     * @returns {FancyDate}
+     * @constructor
+     */
     function FancyDate( element, settings ) {
         var SELF = this;
         if ( element[ 0 ].nodeName != 'INPUT' ) {
@@ -94,6 +101,7 @@
         SELF.init();
         return SELF;
     }
+
 
     FancyDate.api = FancyDate.prototype = {};
     FancyDate.api.version          = VERSION;
@@ -183,7 +191,7 @@
                 }
             }, 2 );
         } ).on( "focus." + NAME + " touchstart." + NAME, function ( e ) {
-            if ( SELF.settings.preventMobileKeyboard ) {
+            if ( Fancy.mobile && SELF.settings.preventMobileKeyboard ) {
                 e.preventDefault();
                 e.stopPropagation();
                 $( "body" ).on( "click." + NAME, function ( e ) {
@@ -217,8 +225,6 @@
                 oldValue = me.value;
             }, 1 );
         } );
-
-
     };
     FancyDate.api.open             = function () {
         var SELF = this;
