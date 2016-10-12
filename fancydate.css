@@ -230,6 +230,14 @@
     color       : #000
 }
 
+#FancyDate-row-6 .FancyDate-day {
+    border-bottom : 1px solid #E1E1E1;
+}
+
+.FancyDate-day:last-child {
+    border-right : 1px solid #E1E1E1;
+}
+
 .FancyDate-day.disabled {
     background : #7E7E7E;
     cursor     : not-allowed;
@@ -242,10 +250,6 @@
 
 .FancyDate-day-extern:not(.disabled) {
     color : #CECECE
-}
-
-#FancyDate-row-1 .FancyDate-day {
-    cursor : default
 }
 
 #FancyDate-footer {
@@ -313,16 +317,9 @@
     cursor   : pointer;
 }
 
-/** this **/
-#FancyDate-title:hover #FancyDate-year-changer {
-    display : block;
-}
-
 #FancyDate-title.FancyDate-year-open #FancyDate-year-changer {
     display : block;
 }
-
-/** or this **/
 
 #FancyDate-year-changer {
     display    : none;
@@ -344,4 +341,27 @@
 #FancyDate-year-changer li {
     list-style  : none;
     line-height : 120%;
+}
+
+#FancyDate-hour-wrapper,
+#FancyDate-minute-wrapper {
+    margin   : 10px 0;
+    position : relative;
+}
+
+#FancyDate-minute-slider,
+#FancyDate-hour-slider {
+    height     : 10px;
+    margin     : 10px;
+    background : grey;
+}
+
+#FancyDate-minute-cursor,
+#FancyDate-hour-cursor {
+    background : #8E0E0E;
+    width      : 20px;
+    height     : 20px;
+    position   : absolute;
+    left       : 0;
+    top        : -5px;
 }
