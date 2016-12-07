@@ -319,6 +319,7 @@
             }, 2 );
         } ).on( "focus." + NAME + " touchstart." + NAME, function ( e ) {
             if ( Fancy.mobile && SELF.settings.preventMobileKeyboard ) {
+                SELF.element.attr( "readonly", "readonly" );
                 e.preventDefault();
                 e.stopPropagation();
                 $( "body" ).on( "click." + NAME, function ( e ) {
@@ -428,6 +429,9 @@
                 SELF.visible = false;
                 SELF.settings.onClose.call( SELF );
                 $( "body" ).removeClass( SELF.name );
+                if ( Fancy.mobile && SELF.settings.preventMobileKeyboard ) {
+                    SELF.element[ 0 ].removeAttribute( "readonly" );
+                }
             }
 
             if ( SELF.settings.animated ) {
