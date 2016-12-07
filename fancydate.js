@@ -125,18 +125,7 @@
         for ( var i = format.length; i > 0; i-- ) {
             var str = format.substring( 0, i );
             str     = escapeRegExp( str );
-            str     = str.replace( /dd/g, "(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])" )
-            .replace( /d/, "[0-3]" )
-            .replace( /MM/g, "(?:0[1-9]|1[0-2])" )
-            .replace( /M/, "[0-1]" )
-            .replace( /yyyy/g, "[0-9]{4}" )
-            .replace( /yyy/g, "[0-9]{3}" )
-            .replace( /yy/g, "[0-9]{2}" )
-            .replace( /y/g, "[0-9]" )
-            .replace( /mm/g, "(?:0[1-9]|(?:1|2|3|4|5)[0-9])" )
-            .replace( /m/g, "[0-5]" )
-            .replace( /HH/g, "(?:0[1-9]|1[0-9]|2[0-3])" )
-            .replace( /H/g, "[0-2]" );
+            str     = str.replace( /dd/g, "(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])" ).replace( /d/, "[0-3]" ).replace( /MM/g, "(?:0[1-9]|1[0-2])" ).replace( /M/, "[0-1]" ).replace( /yyyy/g, "[0-9]{4}" ).replace( /yyy/g, "[0-9]{3}" ).replace( /yy/g, "[0-9]{2}" ).replace( /y/g, "[0-9]" ).replace( /mm/g, "(?:0[1-9]|(?:1|2|3|4|5)[0-9])" ).replace( /m/g, "[0-5]" ).replace( /HH/g, "(?:0[1-9]|1[0-9]|2[0-3])" ).replace( /H/g, "[0-2]" );
             regex += "(^" + str + "$)";
             if ( i !== 1 ) {
                 regex += "|"
@@ -352,7 +341,6 @@
                 setTimeout( function () {
                     var regex = dateToRegex( SELF.settings.format ),
                         exec  = regex.exec( me.value );
-                    console.log(regex);
                     if ( exec === null ) {
                         if ( me.value ) {
                             me.value = oldValue;
@@ -363,6 +351,7 @@
                         }
                     } else if ( exec[ 1 ] ) {
                         SELF.select( SELF.decode( me.value ) );
+                        SELF.close();
                     }
                     oldValue = me.value;
                 }, 1 );
@@ -640,7 +629,6 @@
                     var date = new Date( $( this ).data( "date" ) );
                     date.setMinutes( SELF.minute );
                     date.setHours( SELF.hour );
-                    console.log( date );
                     SELF.select( date );
                 }
                 e.preventDefault();
@@ -790,67 +778,6 @@
     };
     FancyDate.api.decode           = function ( date ) {
         var SELF = this;
-
-        /*var format = SELF.settings.format.split( "" );
-        var m      = "", dateFormat = [], gi = 0, custom = false, i = 0;
-        for ( i; i < format.length; i++ ) {
-            custom = format[ i ] == "'" ? !custom : custom;
-            if ( custom ) {if ( format[ i ] != "'" ) {dateFormat[ Math.max( 0, gi - 1 ) ] += format[ i ];} else {dateFormat[ Math.max( 0, gi - 1 ) ] = "";}} else if ( format[ i ] != "'" ) {
-                if ( format[ i ] == m ) {dateFormat[ gi - 1 ] += format[ i ];} else {
-                    dateFormat[ gi ] = format[ i ];
-                    gi++;
-                }
-                m = format[ i ];
-            }
-        }
-        console.log( dateFormat );
-
-        var date_props = {
-            d   : 1,
-            dd  : 1,
-            EE  : 1,
-            EEE : 1,
-            EEEE: 1,
-            S   : 1,
-            w   : 1,
-            z   : 1,
-            WW  : 1,
-            W   : 1,
-            M   : 1,
-            MM  : 1,
-            MMM : 1,
-            MMMM: 1,
-            n   : 1,
-            t   : 1,
-            L   : 1,
-            yyyy: 1,
-            yy  : 1,
-            a   : 1,
-            A   : 1,
-            g   : 1,
-            G   : 1,
-            h   : 1,
-            HH  : 1,
-            H   : 1,
-            mm  : 1,
-            m   : 1,
-            ss  : 1,
-            s   : ""
-        };
-        var position   = 0;
-        var _date      = {};
-        for ( i = 0; i < dateFormat.length; i++ ) {
-            var f = dateFormat[ i ];
-            if ( f.match( /[a-zA-Z]/g ) && typeof date_props[ f ] != "undefined" ) {
-                switch ( f ) {
-                    case "d":
-                        _date.d = parseInt( date.substring( position ) );
-                }
-            }
-        }
-
-        return date_string;*/
-
         var format = {
             d: parseInt( date.substring( SELF.settings.format.indexOf( "dd" ), SELF.settings.format.indexOf( "dd" ) + 2 ) ),
             m: parseInt( date.substring( SELF.settings.format.indexOf( "MM" ), SELF.settings.format.indexOf( "MM" ) + 2 ) ) - 1,
