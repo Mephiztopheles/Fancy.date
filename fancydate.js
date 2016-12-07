@@ -109,24 +109,57 @@
 
     function dateToRegex( format ) {
         var regex = "";
-        if ( format.match( /dd|DD/ ) === null ) {
-            format = format.replace( /d|D/, "dd" );
+
+        /*if ( format.match( /dd/ ) === null ) {
+            format = format.replace( /d/, "dd" );
         }
-        if ( format.match( /mm|MM/ ) === null ) {
-            format = format.replace( /m|M/, "mm" );
+        if ( format.match( /MM/ ) === null ) {
+            format = format.replace( /M/, "MM" );
         }
-        if ( format.match( /yyyy|YYYY/ ) === null ) {
-            format = format.replace( /yyy|YYYY/, "yyyy" ).replace( /yy|YY/, "yyyy" ).replace( /y|Y/, "yyyy" );
+        if ( format.match( /yyyy/ ) === null ) {
+            format = format.replace( /yyy/, "yyyy" ).replace( /yy/, "yyyy" ).replace( /y/, "yyyy" );
         }
+        if ( format.match( /HH/ ) === null ) {
+            format = format.replace( /H/, "HH" );
+        }*/
         for ( var i = format.length; i > 0; i-- ) {
             var str = format.substring( 0, i );
             str     = escapeRegExp( str );
-            str     = str.replace( /(dd)|(DD)/g, "(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])" ).replace( /(mm)|(MM)/g, "(?:0[1-9]|1[0-2])" ).replace( /d|D/, "[0-3]" ).replace( /m|M/, "[0-1]" ).replace( /(y)|(Y)/g, "[0-9]" );
+            str     = str.replace( /dd/g, "(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])" )
+            .replace( /d/, "[0-3]" )
+            .replace( /MM/g, "(?:0[1-9]|1[0-2])" )
+            .replace( /M/, "[0-1]" )
+            .replace( /yyyy/g, "[0-9]{4}" )
+            .replace( /yyy/g, "[0-9]{3}" )
+            .replace( /yy/g, "[0-9]{2}" )
+            .replace( /y/g, "[0-9]" )
+            .replace( /mm/g, "(?:0[1-9]|(?:1|2|3|4|5)[0-9])" )
+            .replace( /m/g, "[0-5]" )
+            .replace( /HH/g, "(?:0[1-9]|1[0-9]|2[0-3])" )
+            .replace( /H/g, "[0-2]" );
             regex += "(^" + str + "$)";
             if ( i !== 1 ) {
                 regex += "|"
             }
         }
+        /*for ( var i = format.length; i > 0; i-- ) {
+            var str = format.substring( 0, i );
+            str     = escapeRegExp( str );
+            str     = str.replace( /dd/g, "(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])" )
+            .replace( /d/g, "(?:[0-9]|1[0-9]|2[0-9]|3[0-1])" )
+            .replace( /MM/g, "(?:0[1-9]|1[0-2])" )
+            .replace( /M/g, "(?:[0-9]|1[0-2])" )
+            .replace( /y/g, "[0-9]" )
+            .replace( /HH/g, "(?:0[1-9]|1[0-9]|2[0-4])" )
+            .replace( /H/g, "(?:[0-9]|1[0-9]|2[0-4])" )
+            .replace( /mm/g, "(?:0[1-9]|(?:1|2|3|4|5)[0-9])" )
+            .replace( /m/g, "(?:[0-9]|(?:1|2|3|4|5)[0-9])" )
+            .replace( /'(.+)'/, "$1" );
+            regex += "(^" + str + "$)";
+            if ( i !== 1 ) {
+                regex += "|"
+            }
+        }*/
         return new RegExp( regex );
     }
 
@@ -313,22 +346,27 @@
             SELF.close();
         } ).on( "keypress." + NAME + " paste." + NAME, function ( e ) {
             var me = this;
-            setTimeout( function () {
-                var regex = dateToRegex( SELF.settings.format ),
-                    exec  = regex.exec( me.value );
-                if ( exec === null ) {
-                    if ( me.value ) {
-                        me.value = oldValue;
-                        e.preventDefault();
-                        e.stopPropagation();
-                    } else {
-                        SELF.clear();
+            if ( SELF.settings.format.match( /EE+|'|S|w|z|W|n|t|L|a|A|g|G|s/ ) ) {
+                SELF.element.attr( "readonly", "readonly" );
+            } else {
+                setTimeout( function () {
+                    var regex = dateToRegex( SELF.settings.format ),
+                        exec  = regex.exec( me.value );
+                    console.log(regex);
+                    if ( exec === null ) {
+                        if ( me.value ) {
+                            me.value = oldValue;
+                            e.preventDefault();
+                            e.stopPropagation();
+                        } else {
+                            SELF.clear();
+                        }
+                    } else if ( exec[ 1 ] ) {
+                        SELF.select( SELF.decode( me.value ) );
                     }
-                } else if ( exec[ 1 ] ) {
-                    SELF.select( SELF.decode( me.value ) );
-                }
-                oldValue = me.value;
-            }, 1 );
+                    oldValue = me.value;
+                }, 1 );
+            }
         } );
     };
     FancyDate.api.open             = function () {
@@ -634,46 +672,50 @@
             }
 
             this.html.hour.off( "mousedown touchstart" ).on( "mousedown touchstart", function ( e ) {
-                var old   = SELF.hour;
-                SELF.hour = setTime( e, "hour", 24 );
-                SELF.selected.setHours( SELF.hour );
-                if ( old !== SELF.hour ) {
-                    SELF.select( new Date( SELF.selected ) );
-                }
-                $( document ).on( "mousemove." + NAME + " touchmove." + NAME, function ( e ) {
-                    old       = SELF.hour;
+                if ( SELF.selected ) {
+                    var old   = SELF.hour;
                     SELF.hour = setTime( e, "hour", 24 );
                     SELF.selected.setHours( SELF.hour );
                     if ( old !== SELF.hour ) {
                         SELF.select( new Date( SELF.selected ) );
                     }
-                } ).on( "mouseup." + NAME + " touchend." + NAME, function ( e ) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    e.stopImmediatePropagation();
-                    $( document ).off( "." + NAME );
-                } )
+                    $( document ).on( "mousemove." + NAME + " touchmove." + NAME, function ( e ) {
+                        old       = SELF.hour;
+                        SELF.hour = setTime( e, "hour", 24 );
+                        SELF.selected.setHours( SELF.hour );
+                        if ( old !== SELF.hour ) {
+                            SELF.select( new Date( SELF.selected ) );
+                        }
+                    } ).on( "mouseup." + NAME + " touchend." + NAME, function ( e ) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        $( document ).off( "." + NAME );
+                    } )
+                }
             } );
             this.html.minute.off( "mousedown touchstart" ).on( "mousedown touchstart", function ( e ) {
-                var old     = SELF.minute;
-                SELF.minute = setTime( e, "minute", 60 );
-                SELF.selected.setMinutes( SELF.minute );
-                if ( old !== SELF.minute ) {
-                    SELF.select( new Date( SELF.selected ) );
-                }
-                $( document ).on( "mousemove." + NAME + " touchmove." + NAME, function ( e ) {
-                    old         = SELF.minute;
+                if ( SELF.selected ) {
+                    var old     = SELF.minute;
                     SELF.minute = setTime( e, "minute", 60 );
                     SELF.selected.setMinutes( SELF.minute );
                     if ( old !== SELF.minute ) {
                         SELF.select( new Date( SELF.selected ) );
                     }
-                } ).on( "mouseup." + NAME + " touchend." + NAME, function ( e ) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    e.stopImmediatePropagation();
-                    $( document ).off( "." + NAME );
-                } )
+                    $( document ).on( "mousemove." + NAME + " touchmove." + NAME, function ( e ) {
+                        old         = SELF.minute;
+                        SELF.minute = setTime( e, "minute", 60 );
+                        SELF.selected.setMinutes( SELF.minute );
+                        if ( old !== SELF.minute ) {
+                            SELF.select( new Date( SELF.selected ) );
+                        }
+                    } ).on( "mouseup." + NAME + " touchend." + NAME, function ( e ) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        $( document ).off( "." + NAME );
+                    } )
+                }
             } );
         }
 
@@ -813,10 +855,10 @@
             d: parseInt( date.substring( SELF.settings.format.indexOf( "dd" ), SELF.settings.format.indexOf( "dd" ) + 2 ) ),
             m: parseInt( date.substring( SELF.settings.format.indexOf( "MM" ), SELF.settings.format.indexOf( "MM" ) + 2 ) ) - 1,
             y: parseInt( date.substring( SELF.settings.format.indexOf( "yyyy" ), SELF.settings.format.indexOf( "yyyy" ) + 4 ) ),
-            h: 0,
-            M: 0
+            h: parseInt( date.substring( SELF.settings.format.indexOf( "HH" ), SELF.settings.format.indexOf( "HH" ) + 2 ) ),
+            M: parseInt( date.substring( SELF.settings.format.indexOf( "mm" ), SELF.settings.format.indexOf( "mm" ) + 2 ) )
         };
-        return new Date( format.y, format.m, format.d );
+        return new Date( format.y, format.m, format.d, format.h, format.M );
     };
     FancyDate.api.translate        = function ( key ) {
         var l = FancyDate.translation[ navigator.language ] ? navigator.language : "en",
@@ -878,14 +920,14 @@
             "day.4"       : "Donnerstag",
             "day.5"       : "Freitag",
             "day.6"       : "Samstag",
-            "day.7"       : "Sonntag",
+            "day.0"       : "Sonntag",
             "day.short.1" : "Mo",
             "day.short.2" : "Di",
             "day.short.3" : "Mi",
             "day.short.4" : "Do",
             "day.short.5" : "Fr",
             "day.short.6" : "Sa",
-            "day.short.7" : "So",
+            "day.short.0" : "So",
             "button.close": "Schlie&szlig;en",
             "button.today": "Heute",
             "button.clear": "L&ouml;schen"
@@ -909,14 +951,14 @@
             "day.4"       : "Thursday",
             "day.5"       : "Friday",
             "day.6"       : "Saturday",
-            "day.7"       : "Sunday",
+            "day.0"       : "Sunday",
             "day.short.1" : "Mo",
             "day.short.2" : "Tu",
             "day.short.3" : "We",
             "day.short.4" : "Th",
             "day.short.5" : "Fr",
             "day.short.6" : "Sa",
-            "day.short.7" : "Su",
+            "day.short.0" : "Su",
             "button.close": "Close",
             "button.today": "Today",
             "button.clear": "Clear"
