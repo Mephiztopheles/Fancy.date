@@ -4,7 +4,7 @@
         Fancy : "1.0.8"
     } );
     var NAME    = "FancyDate",
-        VERSION = "1.2.2",
+        VERSION = "1.3.0",
         logged  = false;
 
     function formatDate( _date2, format ) {
@@ -125,7 +125,27 @@
         for ( var i = format.length; i > 0; i-- ) {
             var str = format.substring( 0, i );
             str     = escapeRegExp( str );
-            str     = str.replace( /dd/g, "(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])" ).replace( /d/, "[0-3]" ).replace( /MM/g, "(?:0[1-9]|1[0-2])" ).replace( /M/, "[0-1]" ).replace( /yyyy/g, "[0-9]{4}" ).replace( /yyy/g, "[0-9]{3}" ).replace( /yy/g, "[0-9]{2}" ).replace( /y/g, "[0-9]" ).replace( /mm/g, "(?:0[1-9]|(?:1|2|3|4|5)[0-9])" ).replace( /m/g, "[0-5]" ).replace( /HH/g, "(?:0[1-9]|1[0-9]|2[0-3])" ).replace( /H/g, "[0-2]" );
+            str     = str.replace( /dd/g, "(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])" ).replace( /MM/g, "(?:0[1-9]|1[0-2])" ).replace( /yyyy/g, "[0-9]{4}" ).replace( /yyy/g, "[0-9]{3}" ).replace( /yy/g, "[0-9]{2}" ).replace( /y/g, "[0-9]" ).replace( /mm/g, "(?:(?:0|1|2|3|4|5)[0-9])" ).replace( /HH/g, "(?:0[0-9]|1[0-9]|2[0-3])" );
+            if ( format[ i + 1 ] == "d" ) {
+                str = str.replace( /d/, "[0-3]" );
+            } else {
+                str = str.replace( /d/, "[1-9][0-9]?" );
+            }
+            if ( format[ i + 1 ] == "M" ) {
+                str = str.replace( /M/, "[0-1]" );
+            } else {
+                str = str.replace( /M/, "[1-9][0-9]?" );
+            }
+            if ( format[ i + 1 ] == "m" ) {
+                str = str.replace( /m/, "[0-5]" );
+            } else {
+                str = str.replace( /m/, "[0-9][0-9]?" );
+            }
+            if ( format[ i + 1 ] == "H" ) {
+                str = str.replace( /H/, "[0-2]" );
+            } else {
+                str = str.replace( /H/, "[0-9][0-9]?" );
+            }
             regex += "(^" + str + "$)";
             if ( i !== 1 ) {
                 regex += "|"
@@ -164,6 +184,10 @@
         return d;
     }
 
+    function setCursor( SELF, type, value, max ) {
+        SELF.html[ type + "Cursor" ].css( "left", (SELF.html[ type + "Slider" ].width() / (max - 1) * value) );
+    }
+
     /**
      *
      * @param element
@@ -200,6 +224,10 @@
             if ( val && val != old ) {
                 setTimeout( function () {
                     SELF.element.val( SELF.encode( SELF.selected ) );
+                    if ( SELF.settings.time ) {
+                        setCursor( SELF, "hour", SELF.selected.getHours(), 24 );
+                        setCursor( SELF, "minute", SELF.selected.getMinutes(), 60 );
+                    }
                 }, 0 );
                 return new Date( val );
             } else {
@@ -211,11 +239,10 @@
         return SELF;
     }
 
-
     FancyDate.api = FancyDate.prototype = {};
-    FancyDate.api.version          = VERSION;
-    FancyDate.api.name             = NAME;
-    FancyDate.api.init             = function () {
+    FancyDate.api.version             = VERSION;
+    FancyDate.api.name                = NAME;
+    FancyDate.api.init                = function () {
         var SELF = this;
         if ( !logged ) {
             logged = true;
@@ -310,7 +337,8 @@
             rows         : []
         };
 
-        var oldValue = SELF.element.val();
+        var oldValue = SELF.element.val(),
+            compileTimer;
         SELF.element.off( "." + NAME ).on( "keydown." + NAME, function ( e ) {
             setTimeout( function () {
                 if ( (e.which | e.keyCode) === 9 ) {
@@ -336,7 +364,7 @@
             SELF.close();
         } ).on( "keypress." + NAME + " paste." + NAME, function ( e ) {
             var me = this;
-            if ( SELF.settings.format.match( /EE+|'|S|w|z|W|n|t|L|a|A|g|G|s/ ) ) {
+            if ( !SELF.decodeCompatibility() ) {
                 SELF.element.attr( "readonly", "readonly" );
             } else {
                 setTimeout( function () {
@@ -351,22 +379,25 @@
                             SELF.clear();
                         }
                     } else if ( exec[ 1 ] ) {
-                        SELF.select( SELF.decode( me.value ) );
-                        SELF.close();
+                        clearTimeout( compileTimer );
+                        compileTimer = setTimeout( function () {
+                            SELF.select( SELF.decode( me.value ) );
+                            SELF.close();
+                        }, 40 );
                     }
                     oldValue = me.value;
                 }, 1 );
             }
         } );
     };
-    FancyDate.api.open             = function () {
+    FancyDate.api.open                = function () {
         var SELF = this;
         if ( !SELF.element[ 0 ].disabled ) {
             if ( this.settings.free ) {
                 $( "body" ).append( SELF.html.wrapper ).addClass( SELF.name );
                 SELF.html.wrapper.append( SELF.html.dialog );
             } else {
-                $( "body" ).append( SELF.html.dialog ).addClass( SELF.name );
+                $( "body" ).append( SELF.html.dialog.css( "position", "absolute" ) ).addClass( SELF.name );
             }
             SELF.html.dialog.append( SELF.html.inner );
             SELF.html.inner.append( SELF.html.header ).append( SELF.html.body ).append( SELF.html.footer );
@@ -413,7 +444,7 @@
 
         return SELF;
     };
-    FancyDate.api.close            = function () {
+    FancyDate.api.close               = function () {
         var SELF = this;
         if ( !SELF.html.dialog.hasClass( "hide" ) ) {
             SELF.element.unbind( "." + SELF.name + ":prevent" );
@@ -444,13 +475,13 @@
 
         return SELF;
     };
-    FancyDate.api.update           = function () {
+    FancyDate.api.update              = function () {
         var SELF = this;
         SELF.html.calendar.html( "" );
         SELF.html.title.html( SELF.html.month.html( SELF.translate( "month." + SELF.current.getMonth() ) ) ).append( SELF.html.year.html( SELF.current.getFullYear() ) );
         SELF.create();
     };
-    FancyDate.api.create           = function () {
+    FancyDate.api.create              = function () {
         var SELF = this,
             current,
             i    = 0,
@@ -611,11 +642,10 @@
             } );
         } else {
             var css = {
-                position: "absolute",
-                left    : this.element.offset().left,
-                top     : this.element.offset().top + this.element.outerHeight()
+                left: this.element.offset().left,
+                top : this.element.offset().top + this.element.outerHeight( true )
             };
-            if ( css.top + this.html.dialog.outerHeight() > window.innerHeight ) {
+            if ( css.top + this.html.dialog.outerHeight( true ) > window.innerHeight ) {
                 css.top = this.element.offset().top - this.html.dialog.outerHeight();
             }
             this.html.dialog.css( css );
@@ -624,7 +654,7 @@
         this.addEventListener();
         return this;
     };
-    FancyDate.api.addEventListener = function () {
+    FancyDate.api.addEventListener    = function () {
         var SELF = this;
 
         for ( var i = 0; i < this.html.days.length; i++ ) {
@@ -759,7 +789,7 @@
 
         return this;
     };
-    FancyDate.api.select           = function ( date ) {
+    FancyDate.api.select              = function ( date ) {
         var SELF = this;
         if ( (this.settings.min && this.settings.min.getTime() > date.getTime()) || (this.settings.max && this.settings.max.getTime() < date.getTime()) ) {
             SELF.close();
@@ -775,32 +805,84 @@
         }
         return this;
     };
-    FancyDate.api.encode           = function ( date, format ) {
+    FancyDate.api.encode              = function ( date, format ) {
         var SELF = this;
         format   = format || SELF.settings.format;
         return formatDate( date, format );
     };
-    FancyDate.api.decode           = function ( date ) {
+    FancyDate.api.decode              = function ( date ) {
         var SELF = this;
-        var format = {
-            d: parseInt( date.substring( SELF.settings.format.indexOf( "dd" ), SELF.settings.format.indexOf( "dd" ) + 2 ) ),
-            m: parseInt( date.substring( SELF.settings.format.indexOf( "MM" ), SELF.settings.format.indexOf( "MM" ) + 2 ) ) - 1,
-            y: parseInt( date.substring( SELF.settings.format.indexOf( "yyyy" ), SELF.settings.format.indexOf( "yyyy" ) + 4 ) ),
-            h: parseInt( date.substring( SELF.settings.format.indexOf( "HH" ), SELF.settings.format.indexOf( "HH" ) + 2 ) ),
-            M: parseInt( date.substring( SELF.settings.format.indexOf( "mm" ), SELF.settings.format.indexOf( "mm" ) + 2 ) )
-        };
-        return new Date( format.y, format.m, format.d, format.h, format.M );
+        if ( SELF.decodeCompatibility() ) {
+            var format = SELF.settings.format;
+
+            function decodePart( code ) {
+                var part;
+                var i = format.indexOf( code + code );
+                if ( ~i ) {
+                    return date.substring( i, i + 2 );
+                }
+                i = format.indexOf( code );
+                if ( ~i ) {
+                    part = date.substring( i, i + 1 );
+                    if ( date.substring( i + 1, i + 2 ).match( /[0-9]/ ) ) {
+                        format = format.replace( code, code + code );
+                        return decodePart( code );
+                    }
+                }
+                return part;
+            }
+
+            var list  = [],
+                parts = {};
+
+            [ "d", "m", "H", "M", "y" ].forEach( function ( code ) {
+                var index = format.indexOf( code );
+                if ( ~index ) {
+                    list.push( { code: code, index: index } );
+                }
+            } );
+
+            list.sort( function ( a, b ) {
+                return a.index > b.index;
+            } ).forEach( function ( item ) {
+                if ( item.code == "y" ) {
+                    var i = format.indexOf( "yyyy" );
+                    if ( ~i ) {
+                        parts.y = date.substring( i, i + 4 );
+                    } else {
+                        i = format.indexOf( "yy" );
+                        if ( ~i ) {
+                            parts.y = date.substring( i, i + 2 );
+                            if ( parts.y ) {
+                                parts.y = SELF.today.getFullYear().toString().substring( 0, 2 ) + parts.y;
+                            }
+                        }
+                    }
+                } else {
+                    parts[ item.code ] = decodePart( item.code );
+                }
+            } );
+
+            parts = {
+                d: parseInt( parts.d || 0 ),
+                m: parseInt( parts.m || 0 ),
+                y: parseInt( parts.y || 0 ),
+                H: parseInt( parts.H || 0 ),
+                M: parseInt( parts.M || 1 ) - 1
+            };
+            return new Date( parts.y, parts.M, parts.d, parts.H, parts.m );
+        }
     };
-    FancyDate.api.translate        = function ( key ) {
+    FancyDate.api.translate           = function ( key ) {
         var l = FancyDate.translation[ navigator.language ] ? navigator.language : "en",
             t = FancyDate.translation[ l ][ key ];
         return t;
     };
-    FancyDate.api.setYear          = function ( year ) {
+    FancyDate.api.setYear             = function ( year ) {
         this.current.setYear( year );
         this.create();
     };
-    FancyDate.api.clear            = function () {
+    FancyDate.api.clear               = function () {
         this.element.val( "" );
         this.selected = null;
         this.current  = this.today;
@@ -809,7 +891,10 @@
         }
         this.close();
     };
-    Fancy.settings[ NAME ]         = {
+    FancyDate.api.decodeCompatibility = function () {
+        return !this.settings.format.match( /EE+|'|S|w|z|W|n|t|L|a|A|g|G|s/ );
+    };
+    Fancy.settings[ NAME ]            = {
         format               : "dd.MM.yyyy",
         time                 : true,
         animated             : true,

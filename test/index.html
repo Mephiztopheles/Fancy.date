@@ -13,6 +13,7 @@
         <input id="date-1" type="text" placeholder="">
         <input id="date-2" type="text" placeholder="">
         <input id="date-3" type="text" placeholder="">
+        <input id="date-4" type="text" placeholder="">
     </body>
     <script>
         $( function () {
@@ -26,6 +27,10 @@
             } );
             Fancy( "#date-3" ).date( {
                 format: "dd.MM.yyyy HH:mm",
+                free  : false
+            } );
+            Fancy( "#date-4" ).date( {
+                format: "d.M.yy H:m",
                 free  : false
             } );
         } );
