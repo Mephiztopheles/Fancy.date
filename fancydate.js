@@ -218,8 +218,8 @@
         SELF.today    = clearTime( new Date() );
         SELF.current  = SELF.element.val() ? SELF.decode( SELF.element.val() ) : SELF.settings.current || new Date();
         SELF.selected = SELF.decode( SELF.element.val() );
-        SELF.hour     = 0;
-        SELF.minute   = 0;
+        SELF.hour     = SELF.selected && SELF.selected.getHours() || 0;
+        SELF.minute   = SELF.selected && SELF.selected.getMinutes() || 0;
         Fancy.watch( SELF, "selected", function ( prop, old, val ) {
             if ( val && val != old ) {
                 setTimeout( function () {
@@ -360,8 +360,8 @@
             if ( !SELF.visible && SELF.settings.query( SELF.element ) ) {
                 SELF.open();
             }
-        } ).on( "blur." + NAME, function () {
-            SELF.close();
+        } ).on( "blur." + NAME, function ( event ) {
+            SELF.close( !!event.relatedTarget );
         } ).on( "keypress." + NAME + " paste." + NAME, function ( e ) {
             var me = this;
             if ( !SELF.decodeCompatibility() ) {
@@ -444,7 +444,7 @@
 
         return SELF;
     };
-    FancyDate.api.close               = function () {
+    FancyDate.api.close               = function ( imediate ) {
         var SELF = this;
         if ( !SELF.html.dialog.hasClass( "hide" ) ) {
             SELF.element.unbind( "." + SELF.name + ":prevent" );
@@ -465,8 +465,8 @@
                 }
             }
 
-            if ( SELF.settings.animated ) {
-                setTimeout( hide, 300 );
+            if ( !imediate && SELF.settings.animated ) {
+                setTimeout( hide, SELF.settings.animated );
                 SELF.html.dialog.addClass( "hide" ).removeClass( "show" );
             } else {
                 hide();
@@ -633,6 +633,10 @@
 
             this.html.minute.append( this.html.minuteSlider );
             this.html.minute.append( this.html.minuteCursor );
+            if ( SELF.settings.time ) {
+                setCursor( SELF, "hour", SELF.hour, 24 );
+                setCursor( SELF, "minute", SELF.minute, 60 );
+            }
         }
 
         if ( this.settings.free ) {
@@ -897,7 +901,7 @@
     Fancy.settings[ NAME ]            = {
         format               : "dd.MM.yyyy",
         time                 : true,
-        animated             : true,
+        animated             : 300,
         onSelect             : function () {},
         onOpen               : function () {},
         onClose              : function () {},
