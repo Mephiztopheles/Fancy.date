@@ -1,45 +1,45 @@
 {
-  "name": "fancy-date",
-  "title": "FancyDate",
-  "description": "JavaScript Datepicker-plugin for Fancy",
-  "version": "1.2.0",
-  "main": "fancydate.js",
-  "homepage": "http://mephiztopheles.wtf/fancy-date",
-  "authors": [
-    {
-      "name": "Markus Ahrweiler",
-      "email": "markus.ahrweiler@web.de",
-      "homepage": "mephiztopheles.wtf"
+    "name"        : "fancy-date",
+    "title"       : "FancyDate",
+    "description" : "JavaScript Datepicker-plugin for Fancy",
+    "version"     : "1.3.1",
+    "main"        : "fancydate.js",
+    "homepage"    : "http://mephiztopheles.wtf/fancy-date",
+    "authors"     : [
+        {
+            "name"    : "Markus Ahrweiler",
+            "email"   : "markus.ahrweiler@web.de",
+            "homepage": "mephiztopheles.wtf"
+        }
+    ],
+    "repository"  : {
+        "type": "git",
+        "url" : "https://github.com/Mephiztopheles/Fancy.date.git"
+    },
+    "ignore"      : [
+        "source",
+        "spec",
+        ".bowerrc",
+        ".gitignore",
+        ".jshintignore",
+        ".jshintrc",
+        "bower.json",
+        "gruntfile.js",
+        "README.md"
+    ],
+    "keywords"    : [
+        "fancydate",
+        "datepicker",
+        "javascript",
+        "browser",
+        "library"
+    ],
+    "bugs"        : {
+        "url": "https://github.com/Mephiztopheles/Fancy.date/issues"
+    },
+    "license"     : "MIT",
+    "dependencies": {
+        "jquery": ">=1.9.1",
+        "fancy" : ">= 1.0.8"
     }
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Mephiztopheles/Fancy.date.git"
-  },
-  "ignore": [
-    "source",
-    "spec",
-    ".bowerrc",
-    ".gitignore",
-    ".jshintignore",
-    ".jshintrc",
-    "bower.json",
-    "gruntfile.js",
-    "README.md"
-  ],
-  "keywords": [
-    "fancydate",
-    "datepicker",
-    "javascript",
-    "browser",
-    "library"
-  ],
-  "bugs": {
-    "url": "https://github.com/Mephiztopheles/Fancy.date/issues"
-  },
-  "license": "MIT",
-  "dependencies": {
-    "jquery": ">=1.9.1",
-    "fancy": ">= 1.0.8"
-  }
 }

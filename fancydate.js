@@ -4,7 +4,7 @@
         Fancy : "1.0.8"
     } );
     var NAME    = "FancyDate",
-        VERSION = "1.3.0",
+        VERSION = "1.3.1",
         logged  = false;
 
     function formatDate( _date2, format ) {
@@ -110,65 +110,35 @@
     function dateToRegex( format ) {
         var regex = "";
 
-        /*if ( format.match( /dd/ ) === null ) {
-            format = format.replace( /d/, "dd" );
-        }
-        if ( format.match( /MM/ ) === null ) {
-            format = format.replace( /M/, "MM" );
-        }
-        if ( format.match( /yyyy/ ) === null ) {
-            format = format.replace( /yyy/, "yyyy" ).replace( /yy/, "yyyy" ).replace( /y/, "yyyy" );
-        }
-        if ( format.match( /HH/ ) === null ) {
-            format = format.replace( /H/, "HH" );
-        }*/
         for ( var i = format.length; i > 0; i-- ) {
             var str = format.substring( 0, i );
             str     = escapeRegExp( str );
             str     = str.replace( /dd/g, "(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])" ).replace( /MM/g, "(?:0[1-9]|1[0-2])" ).replace( /yyyy/g, "[0-9]{4}" ).replace( /yyy/g, "[0-9]{3}" ).replace( /yy/g, "[0-9]{2}" ).replace( /y/g, "[0-9]" ).replace( /mm/g, "(?:(?:0|1|2|3|4|5)[0-9])" ).replace( /HH/g, "(?:0[0-9]|1[0-9]|2[0-3])" );
             if ( format[ i + 1 ] == "d" ) {
-                str = str.replace( /d/, "[0-3]" );
-            } else {
                 str = str.replace( /d/, "[1-9][0-9]?" );
+            } else {
+                str = str.replace( /d/, "[0-3]" );
             }
             if ( format[ i + 1 ] == "M" ) {
-                str = str.replace( /M/, "[0-1]" );
-            } else {
                 str = str.replace( /M/, "[1-9][0-9]?" );
+            } else {
+                str = str.replace( /M/, "[0-1]" );
             }
             if ( format[ i + 1 ] == "m" ) {
-                str = str.replace( /m/, "[0-5]" );
-            } else {
                 str = str.replace( /m/, "[0-9][0-9]?" );
+            } else {
+                str = str.replace( /m/, "[0-5]" );
             }
             if ( format[ i + 1 ] == "H" ) {
-                str = str.replace( /H/, "[0-2]" );
-            } else {
                 str = str.replace( /H/, "[0-9][0-9]?" );
+            } else {
+                str = str.replace( /H/, "[0-2]" );
             }
             regex += "(^" + str + "$)";
             if ( i !== 1 ) {
                 regex += "|"
             }
         }
-        /*for ( var i = format.length; i > 0; i-- ) {
-            var str = format.substring( 0, i );
-            str     = escapeRegExp( str );
-            str     = str.replace( /dd/g, "(?:0[1-9]|1[0-9]|2[0-9]|3[0-1])" )
-            .replace( /d/g, "(?:[0-9]|1[0-9]|2[0-9]|3[0-1])" )
-            .replace( /MM/g, "(?:0[1-9]|1[0-2])" )
-            .replace( /M/g, "(?:[0-9]|1[0-2])" )
-            .replace( /y/g, "[0-9]" )
-            .replace( /HH/g, "(?:0[1-9]|1[0-9]|2[0-4])" )
-            .replace( /H/g, "(?:[0-9]|1[0-9]|2[0-4])" )
-            .replace( /mm/g, "(?:0[1-9]|(?:1|2|3|4|5)[0-9])" )
-            .replace( /m/g, "(?:[0-9]|(?:1|2|3|4|5)[0-9])" )
-            .replace( /'(.+)'/, "$1" );
-            regex += "(^" + str + "$)";
-            if ( i !== 1 ) {
-                regex += "|"
-            }
-        }*/
         return new RegExp( regex );
     }
 
@@ -367,7 +337,8 @@
             if ( !SELF.decodeCompatibility() ) {
                 SELF.element.attr( "readonly", "readonly" );
             } else {
-                setTimeout( function () {
+                clearTimeout( compileTimer );
+                compileTimer = setTimeout( function () {
                     var regex = dateToRegex( SELF.settings.format ),
                         exec  = regex.exec( me.value );
                     if ( exec === null ) {
@@ -386,7 +357,7 @@
                         }, 40 );
                     }
                     oldValue = me.value;
-                }, 1 );
+                }, 500 );
             }
         } );
     };
