@@ -9,6 +9,7 @@
 
     function formatDate( _date2, format ) {
         _date2 = _date2 ? new Date( _date2 ) : null;
+
         function getDayOfYear() {
             var onejan = new Date( _date2.getFullYear(), 0, 1 );
             return Math.ceil( (_date2 - onejan) / 86400000 );
@@ -21,7 +22,9 @@
             return sfx[ (val - 20) % 10 ] || sfx[ val ] || sfx[ 0 ];
         }
 
-        function getWeek() {return Math.ceil( (_date2.getDate() - _date2.getDay()) / 7 );}
+        function getWeek() {
+            return Math.ceil( (_date2.getDate() - _date2.getDay()) / 7 );
+        }
 
         function getDay() {
             var d = _date2.getDay();
@@ -37,12 +40,20 @@
             var yr = _date2.getFullYear();
             if ( parseInt( yr ) % 4 === 0 ) {
                 if ( parseInt( yr ) % 100 === 0 ) {
-                    if ( parseInt( yr ) % 400 !== 0 ) {return false;}
-                    if ( parseInt( yr ) % 400 === 0 ) {return true;}
+                    if ( parseInt( yr ) % 400 !== 0 ) {
+                        return false;
+                    }
+                    if ( parseInt( yr ) % 400 === 0 ) {
+                        return true;
+                    }
                 }
-                if ( parseInt( yr ) % 100 !== 0 ) {return true;}
+                if ( parseInt( yr ) % 100 !== 0 ) {
+                    return true;
+                }
             }
-            if ( parseInt( yr ) % 4 !== 0 ) {return false;}
+            if ( parseInt( yr ) % 4 !== 0 ) {
+                return false;
+            }
         }
 
         function parse() {
@@ -50,16 +61,25 @@
             var m  = "", dateFormat = [], gi = 0, custom = false, i = 0;
             for ( i; i < format.length; i++ ) {
                 custom = format[ i ] == "'" ? !custom : custom;
-                if ( custom ) {if ( format[ i ] != "'" ) {dateFormat[ Math.max( 0, gi - 1 ) ] += format[ i ];} else {dateFormat[ Math.max( 0, gi - 1 ) ] = "";}} else if ( format[ i ] != "'" ) {
-                    if ( format[ i ] == m ) {dateFormat[ gi - 1 ] += format[ i ];} else {
+                if ( custom ) {
+                    if ( format[ i ] != "'" ) {
+                        dateFormat[ Math.max( 0, gi - 1 ) ] += format[ i ];
+                    } else {
+                        dateFormat[ Math.max( 0, gi - 1 ) ] = "";
+                    }
+                } else if ( format[ i ] != "'" ) {
+                    if ( format[ i ] == m ) {
+                        dateFormat[ gi - 1 ] += format[ i ];
+                    } else {
                         dateFormat[ gi ] = format[ i ];
                         gi++;
                     }
                     m = format[ i ];
                 }
             }
-            var _date       = _date2.getDate(), month = _date2.getMonth(), hours = _date2.getHours(), minutes = _date2.getMinutes(), seconds = _date2.getSeconds();
-            var date_props  = {
+            var _date = _date2.getDate(), month = _date2.getMonth(), hours = _date2.getHours(), minutes = _date2.getMinutes(),
+                seconds                                                                                 = _date2.getSeconds();
+            var date_props                                                                              = {
                 d   : _date,
                 dd  : _date < 10 ? "0" + _date : _date,
                 EE  : FancyDate.api.translate( "day.short." + _date2.getDay() )[ 0 ],
@@ -91,16 +111,22 @@
                 ss  : seconds < 10 ? "0" + seconds : seconds,
                 s   : seconds
             };
-            var date_string = "";
+            var date_string                                                                             = "";
             for ( i = 0; i < dateFormat.length; i++ ) {
                 var f = dateFormat[ i ];
-                if ( f.match( /[a-zA-Z]/g ) && typeof date_props[ f ] != "undefined" ) {date_string += date_props[ f ];} else {date_string += f;}
+                if ( f.match( /[a-zA-Z]/g ) && typeof date_props[ f ] != "undefined" ) {
+                    date_string += date_props[ f ];
+                } else {
+                    date_string += f;
+                }
             }
             date_string = date_string.replace( /\d/g, "" ) === "" ? date_string : date_string;
             return date_string;
         }
 
-        if ( format && _date2 && _date2 != "Invalid Date" ) {return parse();}
+        if ( format && _date2 && _date2 != "Invalid Date" ) {
+            return parse();
+        }
     }
 
     function escapeRegExp( str ) {
@@ -195,8 +221,10 @@
                 setTimeout( function () {
                     SELF.element.val( SELF.encode( SELF.selected ) );
                     if ( SELF.settings.time ) {
-                        setCursor( SELF, "hour", SELF.selected.getHours(), 24 );
-                        setCursor( SELF, "minute", SELF.selected.getMinutes(), 60 );
+                        SELF.hour     = SELF.selected && SELF.selected.getHours() || 0;
+                        SELF.minute   = SELF.selected && SELF.selected.getMinutes() || 0;
+                        setCursor( SELF, "hour", SELF.hour, 24 );
+                        setCursor( SELF, "minute", SELF.minute, 60 );
                     }
                 }, 0 );
                 return new Date( val );
@@ -420,6 +448,7 @@
         if ( !SELF.html.dialog.hasClass( "hide" ) ) {
             SELF.element.unbind( "." + SELF.name + ":prevent" );
             SELF.html.title.removeClass( NAME + "-year-open" );
+
             function hide() {
                 SELF.html.wrapper.remove();
                 SELF.html.dialog.remove();
@@ -604,10 +633,8 @@
 
             this.html.minute.append( this.html.minuteSlider );
             this.html.minute.append( this.html.minuteCursor );
-            if ( SELF.settings.time ) {
-                setCursor( SELF, "hour", SELF.hour, 24 );
-                setCursor( SELF, "minute", SELF.minute, 60 );
-            }
+            setCursor( SELF, "hour", SELF.hour, 24 );
+            setCursor( SELF, "minute", SELF.minute, 60 );
         }
 
         if ( this.settings.free ) {
@@ -873,9 +900,12 @@
         format               : "dd.MM.yyyy",
         time                 : true,
         animated             : 300,
-        onSelect             : function () {},
-        onOpen               : function () {},
-        onClose              : function () {},
+        onSelect             : function () {
+        },
+        onOpen               : function () {
+        },
+        onClose              : function () {
+        },
         query                : function () {
             return true;
         },
